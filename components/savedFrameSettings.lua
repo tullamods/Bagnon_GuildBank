@@ -23,7 +23,7 @@ function SavedFrameSettings:GetDefaultGuildBankSettings()
 		itemFrameSpacing = 2,
 
 		--optional components
-		hasMoneyFrame = false,
+		hasMoneyFrame = true,
 		hasBagFrame = true,
 		hasDBOFrame = true,
 		hasSearchToggle = true,

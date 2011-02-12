@@ -2,7 +2,7 @@
 ## Title: Bagnon Guild Bank
 ## Author: Tuller
 ## Notes: Single window display for your guild bank
-## Version: 1.0.0
+## Version: 1.0.1
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
 ## DefaultState: disabled 
