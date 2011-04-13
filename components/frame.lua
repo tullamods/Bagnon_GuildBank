@@ -17,6 +17,8 @@ function Frame:OnShow()
 	PlaySound('GuildVaultOpen')
 
 	self:UpdateEvents()
+	self:RegisterMessage('SHOW_LOG_FRAME')
+	self:RegisterMessage('SHOW_ITEM_FRAME')
 	self:UpdateLook()
 end
 
@@ -38,7 +40,22 @@ end
 
 
 --[[
-	Actions
+	Messages
+--]]
+
+function Frame:SHOW_LOG_FRAME()
+	self:ShowFrame(self:GetLogFrame())
+	self:GetItemFrame():Hide()
+end
+
+function Frame:SHOW_ITEM_FRAME()
+	self:ShowFrame(self:GetItemFrame())
+	self:GetLogFrame():Hide()
+end
+
+
+--[[
+	Create
 --]]
 
 function Frame:CreateItemFrame()
@@ -57,6 +74,55 @@ function Frame:CreateMoneyFrame()
 	local f = Bagnon.GuildMoneyFrame:New(self:GetFrameID(), self)
 	self.moneyFrame = f
 	return f
+end
+
+function Frame:CreateLogToggle()
+	local f = Bagnon.LogToggle:New(self:GetFrameID(), self)
+	self.logToggle = f
+	return f
+end
+
+function Frame:CreateMoneyLogToggle()
+	local f = Bagnon.MoneyLogToggle:New(self:GetFrameID(), self)
+	self.moneyLogToggle = f
+	return f
+end
+
+function Frame:CreateLogFrame()
+	local item = self:GetItemFrame()
+	local log = Bagnon.LogFrame:New(self:GetFrameID(), self)
+	log:SetPoint('BOTTOMRIGHT', item, -25, 0)
+	log:SetPoint('TOPLEFT', item)
+	
+	self.logFrame = log
+	return log
+end
+
+
+--[[
+	Properties
+--]]
+
+function Frame:HasLogs()
+	return true
+end
+
+function Frame:GetLogFrame()
+	return self.logFrame or self:CreateLogFrame()
+end
+
+function Frame:GetLogToggles()
+	local log = self:GetLogToggle() or self:CreateLogToggle()
+	local moneyLog = self:GetMoneyLogToggle() or self:CreateMoneyLogToggle()
+	return log, moneyLog
+end
+
+function Frame:GetLogToggle()
+	return self.logToggle
+end
+
+function Frame:GetMoneyLogToggle()
+	return self.moneyLogToggle
 end
 
 function Frame:HasBagFrame()
