@@ -20,6 +20,10 @@ function Frame:OnShow()
 	self:RegisterMessage('SHOW_LOG_FRAME')
 	self:RegisterMessage('SHOW_ITEM_FRAME')
 	self:UpdateLook()
+	
+	if self:GetLogFrame():IsShown() then
+		self:GetItemFrame():Hide()
+	end
 end
 
 function Frame:OnHide()
