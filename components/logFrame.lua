@@ -24,6 +24,7 @@ function LogFrame:New(frameID, parent)
 	f:RegisterEvent('GUILDBANKLOG_UPDATE')
 	f:RegisterMessage('SHOW_LOG_TRANSACTIONS')
 	f:RegisterMessage('SHOW_LOG_MONEY')
+	f:RegisterMessage('GUILD_BANK_CLOSED')
 	
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetFontObject(GameFontHighlight)
@@ -78,6 +79,10 @@ end
 
 function LogFrame:GUILD_BANK_TAB_CHANGE()
 	self:Update()
+end
+
+function LogFrame:GUILD_BANK_CLOSED()
+	self:Hide()
 end
 
 

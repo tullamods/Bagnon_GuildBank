@@ -14,7 +14,7 @@ local NORMAL_TEXTURE_SIZE = 64 * (SIZE/36)
 
 --[[ Constructor ]]--
 
-function LogToggle:New(frameID, parent)
+function LogToggle:New(parent, isMoney)
 	local b = self:Bind(CreateFrame('CheckButton', nil, parent))
 	b:SetWidth(SIZE)
 	b:SetHeight(SIZE)
@@ -45,21 +45,26 @@ function LogToggle:New(frameID, parent)
 
 	local icon = b:CreateTexture()
 	icon:SetAllPoints(b)
-	icon:SetTexture([[Interface\Icons\INV_Misc_Note_05]])
+	
+	if isMoney then
+		icon:SetTexture([[Interface\Icons\INV_Misc_Coin_01]])
+	else
+		icon:SetTexture([[Interface\Icons\INV_Misc_Note_05]])
+	end
 
-	b:RegisterMessage('SHOW_LOG_MONEY')
+	if isMoney then
+		b:RegisterMessage('SHOW_LOG_TRANSACTIONS', 'Uncheck')
+	else
+		b:RegisterMessage('SHOW_LOG_MONEY', 'Uncheck')
+	end
+	
+	b:RegisterMessage('GUILD_BANK_CLOSED', 'Uncheck')
 	b:SetScript('OnClick', b.OnClick)
 	b:SetScript('OnEnter', b.OnEnter)
 	b:SetScript('OnLeave', b.OnLeave)
+	b.isMoney = isMoney
 	
 	return b
-end
-
-
---[[ Messages ]]--
-
-function LogToggle:SHOW_LOG_MONEY()
-	self:SetChecked(false)
 end
 
 
@@ -68,7 +73,12 @@ end
 function LogToggle:OnClick()
 	if self:GetChecked() then
 		self:SendMessage('SHOW_LOG_FRAME')
-		self:SendMessage('SHOW_LOG_TRANSACTIONS')
+		
+		if self:IsMoney() then
+			self:SendMessage('SHOW_LOG_MONEY')
+		else
+			self:SendMessage('SHOW_LOG_TRANSACTIONS')
+		end
 	else
 		self:SendMessage('SHOW_ITEM_FRAME')
 	end
@@ -81,9 +91,24 @@ function LogToggle:OnEnter()
 		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
 	end
 	
-	GameTooltip:SetText('Click to show the transaction log')
+	if self:IsMoney() then
+		GameTooltip:SetText('Click to show the money log')
+	else
+		GameTooltip:SetText('Click to show the transaction log')
+	end
 end
 
 function LogToggle:OnLeave()
 	GameTooltip:Hide()
+end
+
+
+--[[ API ]]--
+
+function LogToggle:IsMoney()
+	return self.isMoney
+end
+
+function LogToggle:Uncheck()
+	self:SetChecked(false)
 end

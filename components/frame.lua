@@ -20,10 +20,6 @@ function Frame:OnShow()
 	self:RegisterMessage('SHOW_LOG_FRAME')
 	self:RegisterMessage('SHOW_ITEM_FRAME')
 	self:UpdateLook()
-	
-	if self:GetLogFrame():IsShown() then
-		self:GetItemFrame():Hide()
-	end
 end
 
 function Frame:OnHide()
@@ -35,6 +31,7 @@ function Frame:OnHide()
 	PlaySound('GuildVaultClose')
 
 	self:UpdateEvents()
+	self:SendMessage('GUILD_BANK_CLOSED')
 
 	--fix issue where a frame is hidden, but not via bagnon controlled methods (ie, close on escape)
 	if self:IsFrameShown() then
@@ -80,15 +77,13 @@ function Frame:CreateMoneyFrame()
 	return f
 end
 
-function Frame:CreateLogToggle()
-	local f = Bagnon.LogToggle:New(self:GetFrameID(), self)
-	self.logToggle = f
-	return f
-end
-
-function Frame:CreateMoneyLogToggle()
-	local f = Bagnon.MoneyLogToggle:New(self:GetFrameID(), self)
-	self.moneyLogToggle = f
+function Frame:CreateLogToggle(isMoney)
+	local f = Bagnon.LogToggle:New(self, isMoney)
+	if isMoney then
+		self.moneyLogToggle = f
+	else
+		self.logToggle = f
+	end
 	return f
 end
 
@@ -117,7 +112,7 @@ end
 
 function Frame:GetLogToggles()
 	local log = self:GetLogToggle() or self:CreateLogToggle()
-	local moneyLog = self:GetMoneyLogToggle() or self:CreateMoneyLogToggle()
+	local moneyLog = self:GetMoneyLogToggle() or self:CreateLogToggle(true)
 	return log, moneyLog
 end
 
