@@ -1,10 +1,10 @@
-## Interface: 40000
+## Interface: 40100
 ## Title: Bagnon Guild Bank
 ## Author: Tuller & Jaliborc (João Libório)
 ## Notes: Single window display for your guild bank
-## Version: 1.0.1
+## Version: 1.1.0
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
-## DefaultState: disabled 
+## DefaultState: disabled
 main.lua
 components.xml
