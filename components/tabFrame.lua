@@ -4,8 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local TabFrame = Bagnon.Classy:New('Frame')
-Bagnon.GuildTabFrame = TabFrame
+local TabFrame = Bagnon:NewClass('GuildTabFrame', 'Frame')
 
 
 --[[ Constructor ]]--

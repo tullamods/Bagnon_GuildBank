@@ -6,5 +6,5 @@
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
 
-main.lua
 components.xml
+main.lua

@@ -4,14 +4,10 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local Frame = Bagnon.Classy:New('Frame', Bagnon.Frame)
-Frame:Hide()
-Bagnon.GuildFrame = Frame
+local Frame = Bagnon:NewClass('GuildFrame', 'Frame', Bagnon.Frame)
 
 
---[[
-	Events
---]]
+--[[ Events ]]--
 
 function Frame:OnShow()
 	PlaySound('GuildVaultOpen')
@@ -40,24 +36,20 @@ function Frame:OnHide()
 end
 
 
---[[
-	Messages
---]]
+--[[ Messages ]]--
 
 function Frame:SHOW_LOG_FRAME()
-	self:ShowFrame(self:GetLogFrame())
+	self:FadeFrame(self:GetLogFrame())
 	self:GetItemFrame():Hide()
 end
 
 function Frame:SHOW_ITEM_FRAME()
-	self:ShowFrame(self:GetItemFrame())
+	self:FadeFrame(self:GetItemFrame())
 	self:GetLogFrame():Hide()
 end
 
 
---[[
-	Create
---]]
+--[[ Create ]]--
 
 function Frame:CreateItemFrame()
 	local f = Bagnon.GuildItemFrame:New(self:GetFrameID(), self)
@@ -98,9 +90,7 @@ function Frame:CreateLogFrame()
 end
 
 
---[[
-	Properties
---]]
+--[[ Properties ]]--
 
 function Frame:HasLogs()
 	return true

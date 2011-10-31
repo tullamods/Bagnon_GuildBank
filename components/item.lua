@@ -4,25 +4,17 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local ItemSlot = Bagnon.Classy:New('Button')
-ItemSlot:Hide()
-Bagnon.GuildItemSlot = ItemSlot
-
+local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button')
 local ItemSearch = LibStub('LibItemSearch-1.0')
-
-
---[[
-	The item widget
---]]
 
 
 --[[ ItemSlot Constructor ]]--
 
 function ItemSlot:New(tab, slot, frameID, parent)
 	local item = self:Restore() or self:Create()
-	item:SetParent(parent)
-	item:SetSlot(tab, slot)
 	item:SetFrameID(frameID)
+  item:SetSlot(tab, slot)
+  item:SetParent(parent)
 
 	if item:IsVisible() then
 		item:Update()

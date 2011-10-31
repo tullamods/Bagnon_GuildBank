@@ -4,8 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local LogFrame = Bagnon.Classy:New('ScrollFrame')
-Bagnon.LogFrame = LogFrame
+local LogFrame = Bagnon:NewClass('LogFrame', 'ScrollFrame')
 
 local MESSAGE_PREFIX = '|cff009999   '
 local MAX_TRANSACTIONS = 24
@@ -91,6 +90,7 @@ end
 function LogFrame:Update()
 	self:UpdateScroll()
 	self.messages:Clear()
+  self:Show()
 	
 	if self.money then
 		self:UpdateMoney()

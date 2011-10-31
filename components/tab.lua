@@ -4,8 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local GuildTab = Bagnon.Classy:New('CheckButton')
-Bagnon.GuildTab = GuildTab
+local GuildTab = Bagnon:NewClass('GuildTab', 'CheckButton')
 
 --constants
 local SIZE = 32

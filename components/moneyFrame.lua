@@ -4,9 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local MoneyFrame = Bagnon.Classy:New('Frame')
-MoneyFrame:Hide()
-Bagnon.GuildMoneyFrame = MoneyFrame
+local MoneyFrame = Bagnon:NewClass('GuildMoneyFrame', 'Frame')
 
 
 --[[ Things! ]]--
