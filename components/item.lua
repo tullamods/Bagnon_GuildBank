@@ -4,7 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button')
+local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button', Bagnon.ItemSlot)
 local ItemSearch = LibStub('LibItemSearch-1.0')
 
 
@@ -359,25 +359,6 @@ end
 
 --[[ Accessor Methods ]]--
 
-function ItemSlot:SetFrameID(frameID)
-	if self:GetFrameID() ~= frameID then
-		self.frameID = frameID
-		self:Update()
-	end
-end
-
-function ItemSlot:GetFrameID()
-	return self.frameID
-end
-
-function ItemSlot:GetSettings()
-	return Bagnon.FrameSettings:Get(self:GetFrameID())
-end
-
-function ItemSlot:GetPlayer()
-	return self:GetSettings():GetPlayerFilter()
-end
-
 function ItemSlot:SetSlot(tab, slot)
 	self.tab = tab
 	self:SetID(slot)
@@ -401,36 +382,4 @@ function ItemSlot:GetItemSlotInfo()
 	local itemLink = GetGuildBankItemLink(self:GetSlot())
 
 	return texture, itemCount, locked, itemLink
-end
-
-
---[[ Item Type Highlighting ]]--
-
-function ItemSlot:HighlightingItemsByQuality()
-	return Bagnon.Settings:HighlightingItemsByQuality()
-end
-
-function ItemSlot:HighlightingQuestItems()
-	return Bagnon.Settings:HighlightingQuestItems()
-end
-
-function ItemSlot:GetHighlightAlpha()
-	return Bagnon.Settings:GetHighlightOpacity()
-end
-
-local QUEST_ITEM_SEARCH = string.format('t:%s|%s', select(10, GetAuctionItemClasses()), 'quest')
-function ItemSlot:IsQuestItem()
-	local itemLink = self:GetItem()
-	if not itemLink then
-		return false
-	end
-
-	return ItemSearch:Find(itemLink, QUEST_ITEM_SEARCH)
-end
-
-
---[[ Empty Slot Visibility ]]--
-
-function ItemSlot:ShowingEmptyItemSlotTexture()
-	return Bagnon.Settings:ShowingEmptyItemSlotTextures()
 end
