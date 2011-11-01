@@ -74,14 +74,12 @@ end
 
 --gets the next unique item slot id
 do
-	local id = 1
+	local id = 0
 	function ItemSlot:GetNextItemSlotID()
-		local nextID = id
 		id = id + 1
-		return nextID
+		return id
 	end
 end
-
 
 
 --[[ ItemSlot Destructor ]]--
@@ -99,40 +97,9 @@ end
 
 --[[ Events ]]--
 
-
 function ItemSlot:GUILDBANK_ITEM_LOCK_CHANGED(event, tab, slot)
 	self:UpdateLocked()
 end
-
-function ItemSlot:TEXT_SEARCH_UPDATE(msg, frameID, search)
-	self:UpdateSearch()
-end
-
-function ItemSlot:ITEM_HIGHLIGHT_QUALITY_UPDATE(msg, enable)
-	self:UpdateBorder()
-end
-
-function ItemSlot:ITEM_HIGHLIGHT_QUEST_UPDATE(msg, enable)
-	self:UpdateBorder()
-end
-
-function ItemSlot:SHOW_EMPTY_ITEM_SLOT_TEXTURE_UPDATE(msg, enable)
-	self:Update()
-end
-
-function ItemSlot:ITEM_SLOT_COLOR_UPDATE(msg, enable)
-	self:Update()
-end
-
-function ItemSlot:HandleEvent(msg, ...)
-	local action = self[msg]
-	if action then
-		action(self, msg, ...)
-	end
-end
-
-
---[[ Frame Events ]]--
 
 function ItemSlot:OnClick(button)
 	if HandleModifiedItemClick(self:GetItem()) then
@@ -175,142 +142,36 @@ function ItemSlot:OnReceiveDrag(button)
 end
 
 function ItemSlot:OnShow()
-	self:Update()
 	self:RegisterEvent('GUILDBANK_ITEM_LOCK_CHANGED')
-end
-
-function ItemSlot:OnHide()
-	self:HideStackSplitFrame()
-	self:UnregisterAllEvents()
-end
-
-function ItemSlot:OnEnter()
-	self:AnchorTooltip()
-	self:UpdateTooltip()
-end
-
-function ItemSlot:OnLeave()
-	GameTooltip:Hide()
-	ResetCursor()
+  self:Update()
 end
 
 
 --[[ Update Methods ]]--
 
--- Update the texture, lock status, and other information about an item
 function ItemSlot:Update()
-	if not self:IsVisible() then return end
-	local texture, itemCount, locked, itemLink = self:GetItemSlotInfo()
+	if not self:IsVisible() then
+    return
+  end
 
+	local texture, itemCount, locked, itemLink = self:GetItemSlotInfo()
 	self:SetItem(itemLink)
 	self:SetTexture(texture)
 	self:SetCount(itemCount)
 	self:SetLocked(locked)
-
 	self:UpdateBorder()
 	self:UpdateSearch()
---	self:UpdateBagSearch()
 
 	if GameTooltip:IsOwned(self) then
 		self:UpdateTooltip()
 	end
 end
 
---item link
-function ItemSlot:SetItem(itemLink)
-	self.hasItem = itemLink or nil
-end
-
-function ItemSlot:GetItem()
-	return self.hasItem
-end
-
---item texture
-function ItemSlot:SetTexture(texture)
-	SetItemButtonTexture(self, texture or self:GetEmptyItemTexture())
-end
-
-local EMPTY_SLOT_TEXTURE = [[Interface\PaperDoll\UI-Backpack-EmptySlot]]
-function ItemSlot:GetEmptyItemTexture()
-	if self:ShowingEmptyItemSlotTexture() then
-		return EMPTY_SLOT_TEXTURE
-	end
-	return nil
-end
-
---item count
-function ItemSlot:SetCount(count)
-	SetItemButtonCount(self, count)
-end
-
-function ItemSlot:GetCount()
-	local texture, itemCount = self:GetItemSlotInfo()
-	return itemCount or 0
-end
-
---locked status
-function ItemSlot:SetLocked(locked)
-	SetItemButtonDesaturated(self, locked, 0.5, 0.5, 0.5)
-end
-
-function ItemSlot:UpdateLocked()
-	self:SetLocked(self:IsLocked())
-end
-
---returns true if the slot is locked, and false otherwise
-function ItemSlot:IsLocked()
-	local texture, itemCount, locked = self:GetItemSlotInfo()
-	return locked
-end
-
---colors the item border based on the quality of the item.  hides it for common/poor items
-function ItemSlot:SetBorderQuality(quality)
-	local border = self.border
-
-	if self:HighlightingItemsByQuality() then
-		if self:GetItem() and quality and quality > 1 then
-			local r, g, b = GetItemQualityColor(quality)
-			border:SetVertexColor(r, g, b, self:GetHighlightAlpha())
-			border:Show()
-			return
-		end
-	end
-
-	if self:HighlightingQuestItems() then
-		if self:IsQuestItem() then
-			border:SetVertexColor(1, 1, 0, self:GetHighlightAlpha())
-			border:Show()
-			return
-		end
-	end
-
-	border:Hide()
-end
-
-function ItemSlot:UpdateBorder()
-	local itemLink = self:GetItem()
-
-	if itemLink then
-		local name, link, quality = GetItemInfo(itemLink)
-		self:SetBorderQuality(quality)
-	else
-		self:SetBorderQuality(nil)
-	end
-end
-
---stack split frame
 function ItemSlot:SplitStack(split)
 	local tab, slot = self:GetSlot()
 	SplitGuildBankItem(tab, slot, split)
 end
 
-function ItemSlot:HideStackSplitFrame()
-	if self.hasStackSplit and self.hasStackSplit == 1 then
-		StackSplitFrame:Hide()
-	end
-end
-
---tooltip methods
 function ItemSlot:UpdateTooltip()
 	if self:IsCached() then
 		GameTooltip:SetHyperlink(self:GetItem())
@@ -320,41 +181,6 @@ function ItemSlot:UpdateTooltip()
 
 	GameTooltip:Show()
 end
-
-function ItemSlot:AnchorTooltip()
-	if self:GetRight() >= (GetScreenWidth() / 2) then
-		GameTooltip:SetOwner(self, 'ANCHOR_LEFT')
-	else
-		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
-	end
-end
-
---search
-function ItemSlot:UpdateSearch()
-	local shouldFade = false
-	local search = self:GetItemSearch()
-
-	if search and search ~= '' then
-		local itemLink = self:GetItem()
-		shouldFade = not(itemLink and ItemSearch:Find(itemLink, search))
-	end
-
-	if shouldFade then
-		self:SetAlpha(0.4)
-		SetItemButtonDesaturated(self, true)
-		self.border:Hide()
-	else
-		self:SetAlpha(1)
-		self:UpdateLocked()
-		self:UpdateBorder()
---		self:UpdateSlotColor()
-	end
-end
-
-function ItemSlot:GetItemSearch()
-	return Bagnon.Settings:GetTextSearch()
-end
-
 
 
 --[[ Accessor Methods ]]--
