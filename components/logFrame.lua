@@ -27,7 +27,6 @@ function LogFrame:New(frameID, parent)
 	
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetFontObject(GameFontHighlight)
-	-- messages:SetInsertMode('TOP') Trows an error message. Blizzard bug?
 	messages:SetScript('OnHyperlinkClick', f.OnHyperlink)
 	messages:SetJustifyH('LEFT')
 	messages:SetAllPoints(true)

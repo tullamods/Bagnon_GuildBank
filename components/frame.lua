@@ -82,8 +82,8 @@ end
 function Frame:CreateLogFrame()
 	local item = self:GetItemFrame()
 	local log = Bagnon.LogFrame:New(self:GetFrameID(), self)
-	log:SetPoint('BOTTOMRIGHT', item, -25, 0)
-	log:SetPoint('TOPLEFT', item)
+	log:SetPoint('BOTTOMRIGHT', item, -27, 5)
+	log:SetPoint('TOPLEFT', item, 5, -5)
 	
 	self.logFrame = log
 	return log

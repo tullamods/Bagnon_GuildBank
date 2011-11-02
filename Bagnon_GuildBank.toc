@@ -2,7 +2,7 @@
 ## Title: |cff20ff20Bagnon Guild Bank|r
 ## Author: Tuller & Jaliborc (João Libório)
 ## Notes: Single window display for your guild bank
-## Version: 4.2.7
+## Version: 4.2.10
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
 
