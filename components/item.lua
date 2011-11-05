@@ -5,6 +5,7 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button', Bagnon.ItemSlot)
+ItemSlot.GUILDBANK_ITEM_LOCK_CHANGED = ItemSlot.UpdateLocked
 ItemSlot.nextID = 0
 
 
@@ -13,6 +14,16 @@ ItemSlot.nextID = 0
 function ItemSlot:SetFrame(parent, tab, slot)
   self:SetSlot(tab, slot)
   self:SetParent(parent)
+end
+
+function ItemSlot:Create()
+	local item = Bagnon.ItemSlot.Create(self)
+	item:SetScript('OnReceiveDrag', self.OnReceiveDrag)
+	item:SetScript('OnDragStart', self.OnDragStart)
+	item:SetScript('OnClick', self.OnClick)
+	item:RegisterForDrag('LeftButton')
+	item:RegisterForClicks('anyUp')
+	return item
 end
 
 function ItemSlot:ConstructNewItemSlot(id)
@@ -26,22 +37,15 @@ end
 
 --[[ Events ]]--
 
-function ItemSlot:GUILDBANK_ITEM_LOCK_CHANGED(event, tab, slot)
-	self:UpdateLocked()
-end
-
 function ItemSlot:OnClick(button)
 	if HandleModifiedItemClick(self:GetItem()) then
 		return
 	end
 
-	if self:IsCached() then
-		return
-	end
-
 	if IsModifiedClick('SPLITSTACK') then
 		if not self:IsLocked() then
-			OpenStackSplitFrame(self:GetCount(), self, 'BOTTOMLEFT', 'TOPLEFT')
+			self.SplitStack = ItemSlot.SplitStack -- have no idea why is necessary
+			OpenStackSplitFrame(select(2, self:GetInfo()), self, 'BOTTOMLEFT', 'TOPLEFT')
 		end
 		return
 	end
@@ -53,12 +57,10 @@ function ItemSlot:OnClick(button)
 	elseif type == 'guildbankmoney' then
 		DropCursorMoney()
 		ClearCursor()
+	elseif button == 'RightButton' then
+		AutoStoreGuildBankItem(self:GetSlot())
 	else
-		if button == 'RightButton' then
-			AutoStoreGuildBankItem(self:GetSlot())
-		else
-			PickupGuildBankItem(self:GetSlot())
-		end
+		PickupGuildBankItem(self:GetSlot())
 	end
 end
 
@@ -71,29 +73,23 @@ function ItemSlot:OnReceiveDrag(button)
 end
 
 function ItemSlot:OnShow()
-	self:RegisterEvent('GUILDBANK_ITEM_LOCK_CHANGED')
-  self:Update()
+ 	self:RegisterEvent('GUILDBANK_ITEM_LOCK_CHANGED')
+	self:Update()
+end
+
+function ItemSlot:OnEnter()
+	if self:GetItem() then
+ 		self:AnchorTooltip()
+		self:UpdateTooltip()
+	end
 end
 
 
---[[ Update Methods ]]--
+--[[ Methods ]]--
 
-function ItemSlot:Update()
-	if not self:IsVisible() then
-    return
-  end
-
-	local texture, itemCount, locked, itemLink = self:GetItemSlotInfo()
-	self:SetItem(itemLink)
-	self:SetTexture(texture)
-	self:SetCount(itemCount)
-	self:SetLocked(locked)
-	self:UpdateBorder()
-	self:UpdateSearch()
-
-	if GameTooltip:IsOwned(self) then
-		self:UpdateTooltip()
-	end
+function ItemSlot:UpdateTooltip()
+	GameTooltip:SetGuildBankItem(self:GetSlot())
+	GameTooltip:Show()
 end
 
 function ItemSlot:SplitStack(split)
@@ -101,18 +97,8 @@ function ItemSlot:SplitStack(split)
 	SplitGuildBankItem(tab, slot, split)
 end
 
-function ItemSlot:UpdateTooltip()
-	if self:IsCached() then
-		GameTooltip:SetHyperlink(self:GetItem())
-	else
-		GameTooltip:SetGuildBankItem(self:GetSlot())
-	end
 
-	GameTooltip:Show()
-end
-
-
---[[ Accessor Methods ]]--
+--[[ Accessors ]]--
 
 function ItemSlot:SetSlot(tab, slot)
 	self.tab = tab
@@ -124,17 +110,15 @@ function ItemSlot:GetSlot()
 	return self.tab, self:GetID()
 end
 
-function ItemSlot:IsSlot(tab, slot)
-	return self.tab == tab and self:GetID() == slot
+function ItemSlot:GetInfo()
+	local slot, tab = self:GetSlot()
+	local link = GetGuildBankItemLink(slot, tab)
+	local icon, count, locked = GetGuildBankItemInfo(slot, tab)
+	local quality = link and select(3, GetItemInfo(link))
+
+	return icon, count, locked, quality, nil, nil, link
 end
 
 function ItemSlot:IsCached()
 	return false
-end
-
-function ItemSlot:GetItemSlotInfo()
-	local texture, itemCount, locked = GetGuildBankItemInfo(self:GetSlot())
-	local itemLink = GetGuildBankItemLink(self:GetSlot())
-
-	return texture, itemCount, locked, itemLink
 end

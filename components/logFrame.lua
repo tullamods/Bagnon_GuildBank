@@ -34,6 +34,10 @@ function LogFrame:New(frameID, parent)
 	messages:SetFading(false)
 	f.messages = messages
 	
+	local bg = f.ScrollBar:CreateTexture()
+	bg:SetTexture(0, 0, 0, .5)
+	bg:SetAllPoints()
+	
 	return f
 end
 
@@ -148,15 +152,17 @@ function LogFrame:UpdateMoney()
 end
 
 function LogFrame:UpdateScroll()
-	self.messages:SetScrollOffset(FauxScrollFrame_GetOffset(self))
 	self.tab = GetCurrentGuildBankTab()
+	self.numTransactions = self.money and GetNumGuildBankMoneyTransactions() or GetNumGuildBankTransactions(self.tab)
 	
-	if self.money then
-		self.numTransactions = GetNumGuildBankMoneyTransactions()
+	if self.numTransactions > 23 then
+		self.messages:SetScrollOffset(FauxScrollFrame_GetOffset(self))
+		self.ScrollBar:Show()
 	else
-		self.numTransactions = GetNumGuildBankTransactions(self.tab)
+		self.messages:SetScrollOffset(0)
+		self.ScrollBar:Hide()
 	end
-
+	
 	FauxScrollFrame_Update(self, self.numTransactions, MAX_TRANSACTIONS, TRANSACTION_HEIGHT)
 end
 
