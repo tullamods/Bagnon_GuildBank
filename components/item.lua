@@ -85,7 +85,7 @@ function ItemSlot:OnEnter()
 end
 
 
---[[ Methods ]]--
+--[[ Updaters ]]--
 
 function ItemSlot:UpdateTooltip()
 	GameTooltip:SetGuildBankItem(self:GetSlot())
@@ -95,6 +95,9 @@ end
 function ItemSlot:SplitStack(split)
 	local tab, slot = self:GetSlot()
 	SplitGuildBankItem(tab, slot, split)
+end
+
+function ItemSlot:UpdateCooldown() -- fake method
 end
 
 
