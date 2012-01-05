@@ -6,7 +6,6 @@
 	<Script file="components\logFrame.lua"/>
 	<Script file="components\moneyLogFrame.lua"/>
 	<Script file="components\logToggle.lua"/>
-	<Script file="components\moneyLogToggle.lua"/>
 	<Script file="components\frame.lua"/>
 	<Script file="components\savedFrameSettings.lua"/>
 	<Script file="components\moneyFrame.lua"/>
