@@ -1,6 +1,6 @@
 --[[
 	logToggle.lua
-		A guild log toggle widget (by João Libório Cardoso)
+		A guild log toggle widget (by João Cardoso)
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
@@ -9,11 +9,28 @@ local LogToggle = Bagnon:NewClass('LogToggle', 'CheckButton')
 
 local SIZE = 20
 local NORMAL_TEXTURE_SIZE = 64 * (SIZE/36)
+local MESSAGES = {
+	'SHOW_LOG_FRAME',
+	'SHOW_LOG_FRAME',
+	'SHOW_EDIT_FRAME'
+}
+
+local ICONS = {
+	[[Interface\Icons\INV_Crate_03]],
+	[[Interface\Icons\INV_Misc_Coin_01]],
+	[[Interface\Icons\INV_Letter_20]] --- TEMP
+}
+
+local TOOLTIPS = {
+	'Click to show the transaction log',
+	'Click to show the money log',
+	'Click to show this tab information'
+}
 
 
 --[[ Constructor ]]--
 
-function LogToggle:New(parent, isMoney)
+function LogToggle:New(parent, type)
 	local b = self:Bind(CreateFrame('CheckButton', nil, parent))
 	b:SetWidth(SIZE)
 	b:SetHeight(SIZE)
@@ -43,25 +60,15 @@ function LogToggle:New(parent, isMoney)
 	b:SetCheckedTexture(ct)
 
 	local icon = b:CreateTexture()
+	icon:SetTexture(ICONS[type])
 	icon:SetAllPoints(b)
-	
-	if isMoney then
-		icon:SetTexture([[Interface\Icons\INV_Misc_Coin_01]])
-	else
-		icon:SetTexture([[Interface\Icons\INV_Misc_Note_05]])
-	end
 
-	if isMoney then
-		b:RegisterMessage('SHOW_LOG_TRANSACTIONS', 'Uncheck')
-	else
-		b:RegisterMessage('SHOW_LOG_MONEY', 'Uncheck')
-	end
-	
+	b:RegisterMessage('LOG_TOGGLE_CHANGED', 'Uncheck')
 	b:RegisterMessage('GUILD_BANK_CLOSED', 'Uncheck')
 	b:SetScript('OnClick', b.OnClick)
 	b:SetScript('OnEnter', b.OnEnter)
 	b:SetScript('OnLeave', b.OnLeave)
-	b.isMoney = isMoney
+	b.type = type
 	
 	return b
 end
@@ -71,13 +78,9 @@ end
 
 function LogToggle:OnClick()
 	if self:GetChecked() then
-		self:SendMessage('SHOW_LOG_FRAME')
-		
-		if self:IsMoney() then
-			self:SendMessage('SHOW_LOG_MONEY')
-		else
-			self:SendMessage('SHOW_LOG_TRANSACTIONS')
-		end
+		self:SendMessage('LOG_TOGGLE_CHANGED')
+		self:SendMessage(MESSAGES[self.type], self.type)
+		self:SetChecked(true)
 	else
 		self:SendMessage('SHOW_ITEM_FRAME')
 	end
@@ -90,24 +93,15 @@ function LogToggle:OnEnter()
 		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
 	end
 	
-	if self:IsMoney() then
-		GameTooltip:SetText('Click to show the money log')
-	else
-		GameTooltip:SetText('Click to show the transaction log')
-	end
+	GameTooltip:SetText(TOOLTIPS[self.type])
 end
 
 function LogToggle:OnLeave()
 	GameTooltip:Hide()
 end
 
-
---[[ API ]]--
-
-function LogToggle:IsMoney()
-	return self.isMoney
-end
-
 function LogToggle:Uncheck()
 	self:SetChecked(false)
 end
+
+LogToggle.numTypes = #MESSAGES
