@@ -4,7 +4,7 @@
 --]]
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
+local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 local LogToggle = Bagnon:NewClass('LogToggle', 'CheckButton')
 
 local SIZE = 20
@@ -19,12 +19,6 @@ local ICONS = {
 	[[Interface\Icons\INV_Crate_03]],
 	[[Interface\Icons\INV_Misc_Coin_01]],
 	[[Interface\Icons\INV_Letter_20]] --- TEMP
-}
-
-local TOOLTIPS = {
-	'Click to show the transaction log',
-	'Click to show the money log',
-	'Click to show this tab information'
 }
 
 
@@ -93,7 +87,7 @@ function LogToggle:OnEnter()
 		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
 	end
 	
-	GameTooltip:SetText(TOOLTIPS[self.type])
+	GameTooltip:SetText(L['Log' .. self.type])
 end
 
 function LogToggle:OnLeave()
