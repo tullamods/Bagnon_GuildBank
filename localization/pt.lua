@@ -4,6 +4,5 @@
 
 local L = LibStub('AceLocale-3.0'):NewLocale('Bagnon-GuildBank', 'ptBR')
 
-L.Log1 = 'Clique para visualizar o log de transações'
-L.Log2 = 'Clique para visualizar o log de dinheiro'
-L.Log3 = 'Clique para visualizar a informação desta TAB'
+L.Log1 = 'Registro de Transações'
+L.Log3 = 'Informação da Aba'
