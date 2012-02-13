@@ -6,5 +6,8 @@
 local L = LibStub('AceLocale-3.0'):NewLocale('Bagnon-GuildBank', 'enUS', true)
 
 L.Log1 = 'Transaction Log'
-L.Log2 = GUILD_BANK_MONEY_LOG
 L.Log3 = 'Tab information'
+
+
+-- Automatically localized - do not translate!
+L.Log2 = GUILD_BANK_MONEY_LOG
