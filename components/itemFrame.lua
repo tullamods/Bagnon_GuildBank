@@ -38,14 +38,7 @@ end
 
 --[[ Messages ]]--
 
-function ItemFrame:OnEvent(event, ...)
-	local action = self[event]
-	if action then
-		action(self, event, ...)
-	end
-end
-
-function ItemFrame:GUILDBANKBAGSLOTS_CHANGED(event, ...)
+function ItemFrame:OnEvent()
 	self:ReloadAllItemSlots()
 end
 
@@ -86,8 +79,6 @@ end
 
 --[[ Update Methods ]]--
 
-
-
 function ItemFrame:UpdateEverything()
 	self:UpdateEvents()
 
@@ -126,7 +117,6 @@ function ItemFrame:AddItemSlot(slot)
 	if not self:GetItemSlot(slot) then
 		local itemSlot = self:NewItemSlot(slot)
 		self.itemSlots[slot] = itemSlot
-		self:RequestLayout()
 	end
 end
 

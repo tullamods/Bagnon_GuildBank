@@ -21,6 +21,7 @@ function LogFrame:New(frameID, parent)
 	f:SetScript('OnHide', f.OnHide)
 	
 	f:RegisterEvent('GUILDBANKLOG_UPDATE')
+	f:RegisterMessage('GUILD_BANK_CLOSED')
 	f:RegisterMessage('SHOW_LOG_FRAME')
 	
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
@@ -174,3 +175,4 @@ function LogFrame:SHOW_LOG_FRAME (event, type)
 end
 
 LogFrame.GUILD_BANK_TAB_CHANGE = LogFrame.Update
+LogFrame.GUILD_BANK_CLOSED = LogFrame.Hide

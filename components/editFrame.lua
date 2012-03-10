@@ -36,6 +36,7 @@ function EditFrame:New(frameID, parent)
 	f:SetScrollChild(edit)
 	f:Hide()
 	
+	f:RegisterMessage('GUILD_BANK_CLOSED')
 	f:RegisterEvent('GUILDBANK_UPDATE_TEXT')
 	f:RegisterEvent('GUILDBANK_TEXT_CHANGED')
 	f:RegisterEvent('PLAYER_LOGOUT')
@@ -111,3 +112,4 @@ function EditFrame:Update()
 end
 
 EditFrame.GUILD_BANK_TAB_CHANGE = EditFrame.Update
+EditFrame.GUILD_BANK_CLOSED = EditFrame.Hide

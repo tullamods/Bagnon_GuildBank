@@ -20,7 +20,6 @@ function GuildTab:New(tabID, frameID, parent)
 	tab:SetScript('OnEnter', tab.OnEnter)
 	tab:SetScript('OnLeave', tab.OnLeave)
 	tab:SetScript('OnClick', tab.OnClick)
-	tab:SetScript('OnDragStart', tab.OnDrag)
 	tab:SetScript('OnReceiveDrag', tab.OnClick)
 	tab:SetScript('OnEvent', tab.OnEvent)
 	tab:SetScript('OnShow', tab.OnShow)
@@ -128,13 +127,17 @@ function GuildTab:OnHide()
 end
 
 function GuildTab:OnClick()
-	SetCurrentGuildBankTab(self:GetID())
-	QueryGuildBankTab(self:GetID())
-	self:SendMessage('GUILD_BANK_TAB_CHANGE', self:GetID())
-end
-
-function GuildTab:OnDrag()
-	--on drag
+	local tab = self:GetID()
+	local viewable = select(3, GetGuildBankTabInfo(tab))
+	
+	if viewable then
+		SetCurrentGuildBankTab(tab)
+		QueryGuildBankTab(tab)
+	
+		self:SendMessage('GUILD_BANK_TAB_CHANGE', tab)
+	else
+		self:SetChecked(false)
+	end
 end
 
 function GuildTab:OnEnter()
@@ -163,17 +166,19 @@ function GuildTab:UpdateEverything()
 end
 
 function GuildTab:Update()
-	local name, icon, isViewable, canDeposit, numWithdrawals, remainingWithdrawals = GetGuildBankTabInfo(self:GetID())
+	local name, icon, viewable, canDeposit, numWithdrawals, remainingWithdrawals = GetGuildBankTabInfo(self:GetID())
 	SetItemButtonTexture(self, icon or [[Interface\PaperDoll\UI-PaperDoll-Slot-Bag]])
 	
-	self:UpdateCount(remainingWithdrawals)
-	
-	--color red if the bag can be purchased
-	if not isViewable then
-		SetItemButtonTextureVertexColor(self, 1, 0.1, 0.1)
-	else
+	if viewable then
 		SetItemButtonTextureVertexColor(self, 1, 1, 1)
+	else
+		--color red if the bag can be purchased
+		SetItemButtonTextureVertexColor(self, 1, 0.1, 0.1)
 	end
+	
+	-- fade out red for red icons
+	_G[self:GetName() .. 'IconTexture']:SetDesaturated(not viewable)
+	self:UpdateCount(remainingWithdrawals)
 end
 
 function GuildTab:SetCount(count)
