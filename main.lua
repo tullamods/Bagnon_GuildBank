@@ -5,9 +5,10 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local GuildBank = Bagnon:NewModule('GuildBank', 'AceEvent-3.0')
+local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 
 function GuildBank:OnEnable()
-	Bagnon.GuildFrame:New('guildbank')
+	Bagnon.GuildFrame:New('guildbank', L.Title)
 
 	self:RegisterEvent('GUILDBANKFRAME_OPENED')
 	self:RegisterEvent('GUILDBANKFRAME_CLOSED')
