@@ -122,6 +122,10 @@ function ItemSlot:GetInfo()
 	return icon, count, locked, quality, nil, nil, link
 end
 
+function ItemSlot:IsQuestItem()
+	return false
+end
+
 function ItemSlot:IsCached()
 	return false
 end

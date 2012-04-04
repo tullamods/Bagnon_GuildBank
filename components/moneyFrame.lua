@@ -44,6 +44,7 @@ end
 
 function MoneyFrame:UpdateEvents()
 	self:UnregisterAllEvents()
+	
 	if self:IsVisible() then
 		self:RegisterEvent('GUILDBANK_UPDATE_MONEY')
 	end

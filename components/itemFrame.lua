@@ -5,9 +5,7 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemFrame = Bagnon:NewClass('GuildItemFrame', 'Frame', Bagnon.ItemFrame)
-
 ItemFrame.USE_COLUMN_LAYOUT = true
-ItemFrame.MAX_ITEMS = 98
 
 
 --[[ Events ]]--
@@ -72,6 +70,10 @@ end
 --returns the item slot assigned to the given slotIndex
 function ItemFrame:GetItemSlot(slot)
 	return self.itemSlots[slot]
+end
+
+function ItemFrame:GetNumSlots()
+	return 98
 end
 
 
