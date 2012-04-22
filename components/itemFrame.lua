@@ -5,7 +5,6 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemFrame = Bagnon:NewClass('GuildItemFrame', 'Frame', Bagnon.ItemFrame)
-ItemFrame.USE_COLUMN_LAYOUT = true
 
 
 --[[ Events ]]--
@@ -45,7 +44,7 @@ end
 
 function ItemFrame:ReloadAllItemSlots()
 	local currentTab = self:GetCurrentTab()
-	for slot = 1, self.MAX_ITEMS do
+	for slot = 1, self:GetNumSlots() do
 		local itemSlot = self:GetItemSlot(slot)
 		if itemSlot then
 			itemSlot:SetSlot(currentTab, slot)
@@ -72,12 +71,16 @@ function ItemFrame:GetItemSlot(slot)
 	return self.itemSlots[slot]
 end
 
+
+--[[ Properties ]]--
+
 function ItemFrame:GetNumSlots()
 	return 98
 end
 
-
---[[ Properties ]]--
+function ItemFrame:HasRowLayout()
+	return false
+end
 
 function ItemFrame:GetCurrentTab()
 	return GetCurrentGuildBankTab() or 0

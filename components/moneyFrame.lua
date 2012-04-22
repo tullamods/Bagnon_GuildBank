@@ -5,7 +5,7 @@
 
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local MoneyFrame = Bagnon:NewClass('GuildMoneyFrame', 'Frame', Bagnon.MoneyFrame)
-local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon')
+local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 
 
 --[[ Frame Events ]]--
