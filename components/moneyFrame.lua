@@ -11,9 +11,9 @@ local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 --[[ Frame Events ]]--
 
 function MoneyFrame:OnClick(button)
-	local cMoney = GetCursorMoney() or 0
-	if cMoney > 0 then
-		self:DepositMoney(cMoney)
+	local money = GetCursorMoney() or 0
+	if money > 0 then
+		self:DepositMoney(money)
 		return
 	end
 
@@ -66,8 +66,8 @@ function MoneyFrame:UpdateTooltip()
 	GameTooltip:Show()
 end
 
-function MoneyFrame:DepositMoney(amount)
-	DepositGuildBankMoney(cMoney)
+function MoneyFrame:DepositMoney(money)
+	DepositGuildBankMoney(money)
 	DropCursorMoney()
 end
 
