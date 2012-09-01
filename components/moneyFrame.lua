@@ -55,11 +55,11 @@ function MoneyFrame:UpdateTooltip()
 	GameTooltip:AddLine(L.TipDeposit, 1, 1, 1)
 
 	if CanWithdrawGuildBankMoney() then
-		local withdrawMoney = GetGuildBankWithdrawMoney()
+		local withdrawMoney = min(GetGuildBankWithdrawMoney(), GetGuildBankMoney())
 		if withdrawMoney > 0 then
-			GameTooltip:AddLine(format(L.TipWithdrawRemaining, self:GetCoinsText(withdrawMoney)), 1, 1, 1)
+			GameTooltip:AddLine(format(L.TipWithdrawRemaining, self:GetCoinsText(withdrawMoney)), 1,1,1)
 		else
-			GameTooltip:AddLine(L.TipWithdraw)
+			GameTooltip:AddLine(L.TipWithdraw, 1,1,1)
 		end
 	end
 

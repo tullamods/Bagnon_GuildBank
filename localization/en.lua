@@ -11,7 +11,7 @@ L.Log3 = 'Tab Information'
 L.TipFunds = 'Guild Funds'
 L.TipDeposit = '<Left Click> to deposit.'
 L.TipWithdrawRemaining = '<Right Click> to withdraw (%s remaining).'
-L.TipWithdraw = '<Right Click> to withdraw.'
+L.TipWithdraw = '<Right Click> to withdraw (no remaining).'
 
 
 -- Automatically localized - do not translate!
