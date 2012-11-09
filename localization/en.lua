@@ -5,7 +5,7 @@
 
 local L = LibStub('AceLocale-3.0'):NewLocale('Bagnon-GuildBank', 'enUS', true)
 
-L.Title = [[%s's Guild Bank]]
+L.Title = "%s's Guild Bank"
 L.Log1 = 'Transaction Log'
 L.Log3 = 'Tab Information'
 L.TipFunds = 'Guild Funds'
