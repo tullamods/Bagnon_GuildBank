@@ -1,6 +1,5 @@
 --[[
-	Bagnon Guild Bank Localization Information: English Language
-		This file must be present to have partial translations
+	Bagnon Guild Bank Localization: English
 --]]
 
 local L = LibStub('AceLocale-3.0'):NewLocale('Bagnon-GuildBank', 'enUS', true)

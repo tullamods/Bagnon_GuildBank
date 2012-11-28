@@ -1,12 +1,7 @@
 ﻿--[[
-	THIS FILE IS ENCODED IN UTF-8
-
-	Bagnon GuildBank Localization Information: Chinese Simplified
-		Credits: 天下牧@萨格拉斯
-
-	Last Update: 2012/03/27 by 天下牧@萨格拉斯
-
+	Bagnon Guild Bank Localization: Chinese Simplified
 --]]
+
 
 local L = LibStub('AceLocale-3.0'):NewLocale('Bagnon-GuildBank', 'zhCN')
 if not L then return end
