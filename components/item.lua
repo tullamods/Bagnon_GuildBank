@@ -88,7 +88,7 @@ end
 --[[ Updaters ]]--
 
 function ItemSlot:UpdateTooltip()
-	GameTooltip:SetGuildBankItem(self:GetSlot())
+	BattlePetToolTip_Show(GameTooltip:SetGuildBankItem(self:GetSlot()))
 	GameTooltip:Show()
 end
 
@@ -97,7 +97,7 @@ function ItemSlot:SplitStack(split)
 	SplitGuildBankItem(tab, slot, split)
 end
 
-function ItemSlot:UpdateCooldown() -- fake method
+function ItemSlot:UpdateCooldown()
 end
 
 
