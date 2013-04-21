@@ -3,36 +3,31 @@
 		A specialized version of the bagnon frame for guild banks
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
-local Frame = Bagnon:NewClass('GuildFrame', 'Frame', Bagnon.Frame)
+local Frame = Bagnon:NewClass('GuildbankFrame', 'Frame', Bagnon.Frame)
+Frame.Title = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank').Title
+Frame.OpenSound = 'GuildVaultOpen'
+Frame.CloseSound = 'GuildVaultClose'
 
 
 --[[ Events ]]--
 
 function Frame:OnShow()
-	PlaySound('GuildVaultOpen')
-
-	self:UpdateEvents()
+	Bagnon.Frame.OnShow(self)
+	
 	self:RegisterMessage('SHOW_LOG_FRAME')
 	self:RegisterMessage('SHOW_EDIT_FRAME')
 	self:RegisterMessage('SHOW_ITEM_FRAME')
-	self:UpdateLook()
 end
 
 function Frame:OnHide()
+	Bagnon.Frame.OnHide(self)
+
 	StaticPopup_Hide('GUILDBANK_WITHDRAW')
 	StaticPopup_Hide('GUILDBANK_DEPOSIT')
 	StaticPopup_Hide('CONFIRM_BUY_GUILDBANK_TAB')
 	CloseGuildBankFrame()
-	PlaySound('GuildVaultClose')
 
-	self:UpdateEvents()
 	self:SendMessage('GUILD_BANK_CLOSED')
-
-	--fix issue where a frame is hidden, but not via bagnon controlled methods (ie, close on escape)
-	if self:IsFrameShown() then
-		self:HideFrame()
-	end
 end
 
 
