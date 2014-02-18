@@ -101,8 +101,7 @@ function ItemSlot:SplitStack(split)
 	SplitGuildBankItem(tab, slot, split)
 end
 
-function ItemSlot:UpdateCooldown()
-end
+function ItemSlot:UpdateCooldown() end
 
 
 --[[ Accessors ]]--
