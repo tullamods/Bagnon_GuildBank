@@ -24,7 +24,7 @@ end
 
 function Tab:OnClick()
 	local tab = self:GetID()
-	local viewable = select(3, GetGuildBankTabInfo(tab))
+	local _,_ viewable = GetGuildBankTabInfo(tab)
 	
 	if viewable then
 		SetCurrentGuildBankTab(tab)
@@ -81,19 +81,23 @@ function Tab:Update()
 end
 
 function Tab:UpdateChecked()
-	self:SetChecked(self:IsCurrentTab())
+	self:SetChecked(self:IsSelected())
 end
 
 function Tab:UpdateCount(count)
 	-- the amount of withdrawls seems to only be correct for the current tab
-	if not self:IsCurrentTab() then 
+	if not self:IsSelected() then 
 		return 
 	end
 	
 	self:SetCount(count or select(6, self:GetInfo()))
 end
 
-function Tab:IsCurrentTab()
+function Tab:GetSlot()
+	return 'guild' .. tostring(self:GetID())
+end
+
+function Tab:IsSelected()
 	return self:GetID() == GetCurrentGuildBankTab()
 end
 
