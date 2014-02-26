@@ -12,7 +12,7 @@ Tab.ClearSearch = Tab.SetSearch
 TabFrame.Button = Bagnon.Tab
 
 
---[[ Scripts ]]--
+--[[ Main ]]--
 
 function Tab:New(...)
 	local tab = Bagnon.Bag.New(self, ...)
@@ -24,46 +24,24 @@ end
 
 function Tab:OnClick()
 	local tab = self:GetID()
-	local _,_ viewable = GetGuildBankTabInfo(tab)
+	local _,_ viewable = self:GetInfo()
 	
 	if viewable then
 		SetCurrentGuildBankTab(tab)
 		QueryGuildBankTab(tab)
 	
-		self:SendMessage('GUILD_BANK_TAB_CHANGE', tab)
+		self:SendMessage('GUILD_BANK_TAB_CHANGE')
 	else
 		self:SetChecked(false)
 	end
 end
 
-
---[[ Events ]]--
-
-function Tab:UpdateEvents()
-	self:UnregisterAllEvents()
-	self:UnregisterAllMessages()
-
-	if self:IsVisible() then
-		self:RegisterMessage('GUILD_BANK_TAB_CHANGE')
-		self:RegisterEvent('GUILDBANK_UPDATE_TABS')
-		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
-	end
-end
-
-function Tab:GUILDBANK_UPDATE_TABS()
-	self:Update()
-end
-
-function Tab:GUILD_BANK_TAB_CHANGE(msg, tabID)
-	self:UpdateChecked()
-end
-
-function Tab:GUILDBANKBAGSLOTS_CHANGED()
-	self:UpdateCount()
+function Tab:GetSlot()
+	return 'guild' .. tostring(self:GetID())
 end
 
 
---[[ Actions ]]--
+--[[ Update ]]--
 
 function Tab:Update()
 	local name, icon, viewable, _,_, remainingWithdrawals = self:GetInfo()
@@ -76,33 +54,19 @@ function Tab:Update()
 	end
 	
 	_G[self:GetName() .. 'IconTexture']:SetDesaturated(not viewable)
-	self:UpdateCount(remainingWithdrawals)
 	self:UpdateChecked()
+	self:UpdateCount(remainingWithdrawals)
 end
 
 function Tab:UpdateChecked()
-	self:SetChecked(self:IsSelected())
+	self:SetChecked(self:GetID() == GetCurrentGuildBankTab())
 end
 
 function Tab:UpdateCount(count)
-	-- the amount of withdrawls seems to only be correct for the current tab
-	if not self:IsSelected() then 
-		return 
+	if self:GetChecked() or self:IsCached() then
+		self:SetCount(count or select(6, self:GetInfo()))
 	end
-	
-	self:SetCount(count or select(6, self:GetInfo()))
 end
-
-function Tab:GetSlot()
-	return 'guild' .. tostring(self:GetID())
-end
-
-function Tab:IsSelected()
-	return self:GetID() == GetCurrentGuildBankTab()
-end
-
-
---[[ Tooltip Methods ]]--
 
 function Tab:UpdateTooltip()
 	local name, icon, _, canDeposit, numWithdrawals = self:GetInfo()
@@ -127,3 +91,24 @@ function Tab:UpdateTooltip()
 
 	GameTooltip:Show()
 end
+
+
+--[[ Events ]]--
+
+function Tab:UpdateEvents()
+	self:UnregisterAllEvents()
+	self:UnregisterAllMessages()
+
+	if self:IsVisible() then
+		self:RegisterMessage('GUILD_BANK_TAB_CHANGE')
+		self:RegisterEvent('GUILDBANK_UPDATE_TABS')
+		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
+	end
+end
+
+function Tab:GUILDBANKBAGSLOTS_CHANGED()
+	self:UpdateCount()
+end
+
+Tab.GUILDBANK_UPDATE_TABS = Tab.Update
+Tab.GUILD_BANK_TAB_CHANGE = Tab.UpdateChecked

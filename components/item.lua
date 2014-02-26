@@ -94,12 +94,19 @@ end
 --[[ Updaters ]]--
 
 function ItemSlot:UpdateTooltip()
-	local pet = {GameTooltip:SetGuildBankItem(self:GetSlot())}
-	if pet[1] and pet[1] > 0 then
-		BattlePetToolTip_Show(unpack(pet))
-	end
+	if self:IsCached() then
+		local dummySlot = self:GetDummyItemSlot()
+		dummySlot:SetParent(self)
+		dummySlot:SetAllPoints(self)
+		dummySlot:Show()
+	else
+		local pet = {GameTooltip:SetGuildBankItem(self:GetSlot())}
+		if pet[1] and pet[1] > 0 then
+			BattlePetToolTip_Show(unpack(pet))
+		end
 
-	GameTooltip:Show()
+		GameTooltip:Show()
+	end
 end
 
 function ItemSlot:SplitStack(split)

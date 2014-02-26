@@ -14,7 +14,11 @@ function ItemFrame:UpdateEvents()
 	self:UnregisterAllMessages()
 
 	if self:IsVisible() then
-		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
+		if self:IsCached() then
+			self:RegisterEvent('GET_ITEM_INFO_RECEIVED')
+		else
+			self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
+		end
 		
 		self:RegisterMessage('ITEM_FRAME_SPACING_UPDATE')
 		self:RegisterMessage('ITEM_FRAME_COLUMNS_UPDATE')
