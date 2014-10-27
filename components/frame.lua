@@ -36,9 +36,10 @@ end
 
 --[[ Messages ]]--
 
-function Frame:SHOW_LOG_FRAME()
+function Frame:SHOW_LOG_FRAME(_, type)
 	self:FadeFrames()
 	self:FadeInFrame(self:GetLogFrame())
+	self.logFrame:Display(type)
 end
 
 function Frame:SHOW_EDIT_FRAME()
