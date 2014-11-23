@@ -22,7 +22,6 @@ function LogFrame:New(frameID, parent)
 	
 	f:RegisterEvent('GUILDBANKLOG_UPDATE')
 	f:RegisterMessage('GUILD_BANK_CLOSED')
-	f:RegisterMessage('SHOW_LOG_FRAME')
 	
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetScript('OnHyperlinkClick', f.OnHyperlink)
@@ -70,6 +69,18 @@ end
 
 --[[ Update ]]--
 
+function LogFrame:Display(type)
+	self.isMoney = type == 2
+	self:Update()
+
+	
+	if self.isMoney then
+		QueryGuildBankLog(MAX_GUILDBANK_TABS + 1)
+	else
+		QueryGuildBankLog(GetCurrentGuildBankTab())
+	end	
+end
+
 function LogFrame:Update()
 	self:UpdateScroll()
 	self.messages:Clear()
@@ -79,8 +90,6 @@ function LogFrame:Update()
 	else
 		self:UpdateTransactions()
 	end
-	
-	self:Show()
 end
 
 function LogFrame:UpdateTransactions()
@@ -98,7 +107,7 @@ function LogFrame:UpdateTransactions()
 		elseif type == "withdraw" then
 			msg = format(GUILDBANK_WITHDRAW_FORMAT, name, itemLink)
 			if ( count > 1 ) then
-				msg = msg..format(GUILDBANK_LOG_QUANTITY, count)
+				msg = msg .. format(GUILDBANK_LOG_QUANTITY, count)
 			end
 		elseif type == "move" then
 			msg = format(GUILDBANK_MOVE_FORMAT, name, itemLink, count, GetGuildBankTabInfo(tab1), GetGuildBankTabInfo(tab2))
@@ -125,7 +134,9 @@ function LogFrame:UpdateMoney()
 		elseif ( type == "withdrawForTab" ) then
 			msg = format(GUILDBANK_WITHDRAWFORTAB_MONEY_FORMAT, name, money)
 		elseif ( type == "buyTab" ) then
-			msg = format(GUILDBANK_BUYTAB_MONEY_FORMAT, name, money)
+			msg = amount > 0 and GUILDBANK_BUYTAB_MONEY_FORMAT:format(name, money) or GUILDBANK_UNLOCKTAB_FORMAT:format(name)
+		elseif ( type == "depositSummary" ) then
+			msg = format(GUILDBANK_AWARD_MONEY_SUMMARY_FORMAT, money)
 		end
 		
 		self:AddLine(msg, year, month, day, hour)
@@ -158,20 +169,6 @@ function LogFrame:AddLine(msg, ...)
 	if msg then
 		self.messages:AddMessage(msg .. MESSAGE_PREFIX .. format(GUILD_BANK_LOG_TIME, RecentTimeDate(...)))
 	end
-end
-
-
---[[ Messages ]]--
-
-function LogFrame:SHOW_LOG_FRAME (event, type)
-	self.isMoney = type == 2
-	self:Update()
-	
-	if self.isMoney then
-		QueryGuildBankLog(MAX_GUILDBANK_TABS + 1)
-	else
-		QueryGuildBankLog(GetCurrentGuildBankTab())
-	end	
 end
 
 LogFrame.GUILD_BANK_TAB_CHANGE = LogFrame.Update

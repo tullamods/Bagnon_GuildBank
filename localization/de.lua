@@ -1,5 +1,5 @@
 --[[
-	Bagnon Guild Bank Localization Information: German Language
+	Bagnon Guild Bank Localization: German
 --]]
  
 local L = LibStub('AceLocale-3.0'):NewLocale('Bagnon-GuildBank', 'deDE')
