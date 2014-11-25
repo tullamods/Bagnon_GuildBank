@@ -6,15 +6,12 @@
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button', Bagnon.ItemSlot)
 ItemSlot.GUILDBANK_ITEM_LOCK_CHANGED = ItemSlot.UpdateLocked
+ItemSlot.GUILD_BANK_TAB_CHANGE = ItemSlot.Update
 ItemSlot.nextID = 0
+ItemSlot.unused = {}
 
 
 --[[ Constructor ]]--
-
-function ItemSlot:SetFrame(parent, tab, slot)
-  self:SetSlot(tab, slot)
-  self:SetParent(parent)
-end
 
 function ItemSlot:Create()
 	local item = Bagnon.ItemSlot.Create(self)
@@ -38,7 +35,7 @@ end
 --[[ Events ]]--
 
 function ItemSlot:OnClick(button)
-	if HandleModifiedItemClick(self:GetItem()) then
+	if HandleModifiedItemClick(self:GetItem()) or self:IsCached() then
 		return
 	end
 
@@ -65,11 +62,15 @@ function ItemSlot:OnClick(button)
 end
 
 function ItemSlot:OnDragStart(button)
-	PickupGuildBankItem(self:GetSlot())
+	if not self:IsCached() then
+		PickupGuildBankItem(self:GetSlot())
+	end
 end
 
 function ItemSlot:OnReceiveDrag(button)
-	PickupGuildBankItem(self:GetSlot())
+	if not self:IsCached() then
+		PickupGuildBankItem(self:GetSlot())
+	end
 end
 
 function ItemSlot:OnShow()
@@ -88,8 +89,19 @@ end
 --[[ Updaters ]]--
 
 function ItemSlot:UpdateTooltip()
-	GameTooltip:SetGuildBankItem(self:GetSlot())
-	GameTooltip:Show()
+	if self:IsCached() then
+		local dummySlot = self:GetDummySlot()
+		dummySlot:SetParent(self)
+		dummySlot:SetAllPoints(self)
+		dummySlot:Show()
+	else
+		local pet = {GameTooltip:SetGuildBankItem(self:GetSlot())}
+		if pet[1] and pet[1] > 0 then
+			BattlePetToolTip_Show(unpack(pet))
+		end
+
+		GameTooltip:Show()
+	end
 end
 
 function ItemSlot:SplitStack(split)
@@ -97,31 +109,22 @@ function ItemSlot:SplitStack(split)
 	SplitGuildBankItem(tab, slot, split)
 end
 
-function ItemSlot:UpdateCooldown() -- fake method
-end
+function ItemSlot:UpdateCooldown() end
 
 
 --[[ Accessors ]]--
 
-function ItemSlot:SetSlot(tab, slot)
-	self.tab = tab
-	self:SetID(slot)
-	self:Update()
+function ItemSlot:GetInfo()
+	return LibStub('LibItemCache-1.1'):GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
 end
 
 function ItemSlot:GetSlot()
-	return self.tab, self:GetID()
+	return self:GetBag(), self:GetID()
 end
 
-function ItemSlot:GetInfo()
-	local slot, tab = self:GetSlot()
-	local link = GetGuildBankItemLink(slot, tab)
-	local icon, count, locked = GetGuildBankItemInfo(slot, tab)
-	local quality = link and select(3, GetItemInfo(link))
-
-	return icon, count, locked, quality, nil, nil, link
+function ItemSlot:GetBag()
+	return GetCurrentGuildBankTab()
 end
 
-function ItemSlot:IsCached()
-	return false
-end
+function ItemSlot:IsQuestItem() end
+function ItemSlot:IsNew() end
