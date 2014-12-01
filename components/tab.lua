@@ -50,10 +50,16 @@ function Tab:Update()
 	local name, icon, viewable, _,_, numWithdrawals, cached = self:GetInfo()
 	if icon then
 		local color = viewable and 1 or 0.1
+		local iconTexture = self.icon or _G[self:GetName() .. 'IconTexture']
+		local iconNumber = tonumber(icon)
 
-		SetItemButtonTexture(self, icon)
-		SetItemButtonTextureVertexColor(self, 1, color, color)
-		_G[self:GetName() .. 'IconTexture']:SetDesaturated(not viewable)
+		if iconNumber then
+			iconTexture:SetToFileData(iconNumber)
+		else
+			iconTexture:SetTexture(icon)
+		end
+		iconTexture:SetVertexColor(1, color, color)
+		iconTexture:SetDesaturated(not viewable)
 
 		self:UpdateChecked()
 
