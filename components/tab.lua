@@ -15,6 +15,7 @@ Tab.ClearSearch = Tab.SetSearch
 
 function Tab:New(...)
 	local tab = Bagnon.Bag.New(self, ...)
+	tab.icon = _G[self:GetName() .. 'IconTexture']
 	tab:SetScript('OnReceiveDrag', nil)
 	tab:SetScript('OnDragStart', nil)
 
@@ -50,17 +51,16 @@ function Tab:Update()
 	local name, icon, viewable, _,_, numWithdrawals, cached = self:GetInfo()
 	if icon then
 		local color = viewable and 1 or 0.1
-		local iconTexture = self.icon or _G[self:GetName() .. 'IconTexture']
-		local iconNumber = tonumber(icon)
+		local iconID = tonumber(icon)
 
-		if iconNumber then
-			iconTexture:SetToFileData(iconNumber)
+		if iconID then
+			self.icon:SetToFileData(iconID)
 		else
-			iconTexture:SetTexture(icon)
+			self.icon:SetTexture(icon)
 		end
-		iconTexture:SetVertexColor(1, color, color)
-		iconTexture:SetDesaturated(not viewable)
-
+		
+		self.icon:SetVertexColor(1, color, color)
+		self.icon:SetDesaturated(not viewable)
 		self:UpdateChecked()
 
 		if cached or self:GetChecked() then
