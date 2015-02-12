@@ -6,16 +6,7 @@
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 local LogToggle = Bagnon:NewClass('LogToggle', 'CheckButton')
-
-local SIZE = 20
-local NORMAL_TEXTURE_SIZE = 64 * (SIZE/36)
-local MESSAGES = {
-	'SHOW_LOG_FRAME',
-	'SHOW_LOG_FRAME',
-	'SHOW_EDIT_FRAME'
-}
-
-local ICONS = {
+LogToggle.Icons = {
 	[[Interface\Icons\INV_Crate_03]],
 	[[Interface\Icons\INV_Misc_Coin_01]],
 	[[Interface\Icons\INV_Letter_20]]
@@ -26,14 +17,12 @@ local ICONS = {
 
 function LogToggle:New(parent, type)
 	local b = self:Bind(CreateFrame('CheckButton', nil, parent))
-	b:SetWidth(SIZE)
-	b:SetHeight(SIZE)
+	b:SetSize(20, 20)
 	b:RegisterForClicks('anyUp')
 
 	local nt = b:CreateTexture()
 	nt:SetTexture([[Interface\Buttons\UI-Quickslot2]])
-	nt:SetWidth(NORMAL_TEXTURE_SIZE)
-	nt:SetHeight(NORMAL_TEXTURE_SIZE)
+	nt:SetSize(35, 35)
 	nt:SetPoint('CENTER', 0, -1)
 	b:SetNormalTexture(nt)
 
@@ -54,30 +43,23 @@ function LogToggle:New(parent, type)
 	b:SetCheckedTexture(ct)
 
 	local icon = b:CreateTexture()
-	icon:SetTexture(ICONS[type])
+	icon:SetTexture(self.Icons[type])
 	icon:SetAllPoints(b)
 
-	b:RegisterMessage('LOG_TOGGLE_CHANGED', 'Uncheck')
-	b:RegisterMessage('GUILD_BANK_CLOSED', 'Uncheck')
 	b:SetScript('OnClick', b.OnClick)
 	b:SetScript('OnEnter', b.OnEnter)
 	b:SetScript('OnLeave', b.OnLeave)
+	b:SetScript('OnHide', b.OnHide)
 	b.type = type
 	
 	return b
 end
 
 
---[[ Frame Events ]]--
+--[[ Interaction ]]--
 
 function LogToggle:OnClick()
-	if self:GetChecked() then
-		self:SendMessage('LOG_TOGGLE_CHANGED')
-		self:SendMessage(MESSAGES[self.type], self.type)
-		self:SetChecked(true)
-	else
-		self:SendMessage('SHOW_ITEM_FRAME')
-	end
+	self:GetParent():ShowPanel(self:GetChecked() and self.type)
 end
 
 function LogToggle:OnEnter()
@@ -94,8 +76,6 @@ function LogToggle:OnLeave()
 	GameTooltip:Hide()
 end
 
-function LogToggle:Uncheck()
+function LogToggle:OnHide()
 	self:SetChecked(false)
 end
-
-LogToggle.numTypes = #MESSAGES

@@ -6,74 +6,81 @@
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local TabFrame = Bagnon:NewClass('GuildTabFrame', 'Frame', Bagnon.BagFrame)
 local Tab = Bagnon:NewClass('GuildTab', 'CheckButton', Bagnon.Bag)
-
-Tab.SetSearch = function() end
-Tab.ClearSearch = Tab.SetSearch
+TabFrame.Button = Tab
 
 
---[[ Main ]]--
+--[[ Constructor ]]--
 
 function Tab:New(...)
 	local tab = Bagnon.Bag.New(self, ...)
-	tab.icon = _G[self:GetName() .. 'IconTexture']
 	tab:SetScript('OnReceiveDrag', nil)
 	tab:SetScript('OnDragStart', nil)
 
 	return tab
 end
 
+function Tab:GetSlot()
+	return 'guild' .. self:GetID()
+end
+
+
+--[[ Interaction ]]--
+
 function Tab:OnClick()
 	local tab = self:GetID()
-	local _,_ viewable = self:GetInfo()
+	local _,_, viewable = self:GetInfo()
 	
 	if viewable then
 		SetCurrentGuildBankTab(tab)
 		QueryGuildBankTab(tab)
-	
-		self:SendMessage('GUILD_BANK_TAB_CHANGE')
-	else
-		self:SetChecked(false)
+		self:SendMessage('GUILDBANK_TAB_CHANGED')
 	end
-end
 
-function Tab:GetSlot()
-	return 'guild' .. tostring(self:GetID())
+	self:SetChecked(viewable)
 end
-
 
 --[[ Update ]]--
 
-function Tab:Update()
-	if not self:IsVisible() then
-		return
-	end
+function Tab:RegisterEvents()
+	self:UnregisterEvents()
+	self:Update()
 
-	local name, icon, viewable, _,_, numWithdrawals, cached = self:GetInfo()
+	if self:IsCached() then
+		self:RegisterMessage('GUILDBANK_TAB_CHANGED', 'UpdateStatus')
+	else
+		self:RegisterEvent('GUILDBANK_UPDATE_TABS', 'Update')
+		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'UpdateStatus')
+	end
+end
+
+function Tab:Update()
+	local name, icon, viewable = self:GetInfo()
 	if icon then
 		local color = viewable and 1 or 0.1
 		local iconID = tonumber(icon)
 
 		if iconID then
-			self.icon:SetToFileData(iconID)
+			self.Icon:SetToFileData(iconID)
 		else
-			self.icon:SetTexture(icon)
+			self.Icon:SetTexture(icon)
 		end
 		
-		self.icon:SetVertexColor(1, color, color)
-		self.icon:SetDesaturated(not viewable)
-		self:UpdateChecked()
-
-		if cached or self:GetChecked() then
-			self.Count:SetText(numWithdrawals)
-		end
+		self.Icon:SetVertexColor(1, color, color)
+		self.Icon:SetDesaturated(not viewable)
+		self:UpdateStatus()
 	end
 
 	self:EnableMouse(icon)
 	self:SetAlpha(icon and 1 or 0)
 end
 
-function Tab:UpdateChecked()
+function Tab:UpdateStatus()
 	self:SetChecked(self:GetID() == GetCurrentGuildBankTab())
+
+	local _,_,_,_,_, numWithdrawals, cached = self:GetInfo()
+	if self:GetChecked() and not cached then
+		self.Count:SetText(numWithdrawals)
+	end
 end
 
 function Tab:UpdateTooltip()
@@ -99,21 +106,3 @@ function Tab:UpdateTooltip()
 
 	GameTooltip:Show()
 end
-
-
---[[ Events ]]--
-
-function Tab:UpdateEvents()
-	self:UnregisterAllEvents()
-	self:UnregisterAllMessages()
-
-	if self:IsVisible() then
-		self:RegisterEvent('GUILDBANK_UPDATE_TABS')
-		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED')
-		self:RegisterMessage('GUILD_BANK_TAB_CHANGE')
-	end
-end
-
-Tab.GUILDBANK_UPDATE_TABS = Tab.Update
-Tab.GUILDBANKBAGSLOTS_CHANGED = Tab.Update
-Tab.GUILD_BANK_TAB_CHANGE = Tab.UpdateChecked

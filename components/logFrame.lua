@@ -13,15 +13,10 @@ local TRANSACTION_HEIGHT = 13
 
 --[[ Constructor ]]--
 
-function LogFrame:New(frameID, parent)
+function LogFrame:New(parent)
 	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent,'FauxScrollFrameTemplate'))
 	f:SetScript('OnVerticalScroll', f.OnScroll)
-	f:SetScript('OnEvent', f.Update)
-	f:SetScript('OnShow', f.OnShow)
-	f:SetScript('OnHide', f.OnHide)
-	
-	f:RegisterEvent('GUILDBANKLOG_UPDATE')
-	f:RegisterMessage('GUILD_BANK_CLOSED')
+	f:SetScript('OnHide', f.UnregisterEvents)
 	
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetScript('OnHyperlinkClick', f.OnHyperlink)
@@ -40,7 +35,7 @@ function LogFrame:New(frameID, parent)
 end
 
 
---[[ Handlers ]]--
+--[[ Interaction ]]--
 
 function LogFrame:OnScroll(offset)
 	if self.type ~= 3 then
@@ -58,22 +53,15 @@ function LogFrame:OnMouseDown()
 	end
 end
 
-function LogFrame:OnShow()
-	self:RegisterMessage('GUILD_BANK_TAB_CHANGE')
-end
-
-function LogFrame:OnHide()
-	self:UnregisterMessage('GUILD_BANK_TAB_CHANGE')
-end
-
 
 --[[ Update ]]--
 
 function LogFrame:Display(type)
 	self.isMoney = type == 2
+	self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'Update')
+	self:RegisterEvent('GUILDBANKLOG_UPDATE', 'Update')
 	self:Update()
 
-	
 	if self.isMoney then
 		QueryGuildBankLog(MAX_GUILDBANK_TABS + 1)
 	else
@@ -155,7 +143,7 @@ function LogFrame:UpdateScroll()
 		self.ScrollBar:Hide()
 	end
 	
-	FauxScrollFrame_Update(self, self.numTransactions, MAX_TRANSACTIONS, TRANSACTION_HEIGHT)
+	FauxScrollFrame_Update(self, self.numTransactions, MAX_TRANSACTIONS, TRANSACTION_HEIGHT, _,_,_,_,_,_, true)
 end
 
 
@@ -170,6 +158,3 @@ function LogFrame:AddLine(msg, ...)
 		self.messages:AddMessage(msg .. MESSAGE_PREFIX .. format(GUILD_BANK_LOG_TIME, RecentTimeDate(...)))
 	end
 end
-
-LogFrame.GUILD_BANK_TAB_CHANGE = LogFrame.Update
-LogFrame.GUILD_BANK_CLOSED = LogFrame.Hide

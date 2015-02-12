@@ -1,6 +1,6 @@
 --[[
 	main.lua
-		The bagnon driver thingy
+		Show and hide frame
 --]]
 
 local GuildBank = Bagnon:NewModule('GuildBank', 'AceEvent-3.0')
@@ -11,10 +11,10 @@ function GuildBank:OnEnable()
 end
 
 function GuildBank:GUILDBANKFRAME_OPENED()
-	Bagnon:ShowFrame('guildbank')
+	Bagnon:ShowFrame('guild')
 	QueryGuildBankTab(GetCurrentGuildBankTab())
 end
 
 function GuildBank:GUILDBANKFRAME_CLOSED()
-	Bagnon:HideFrame('guildbank')
+	Bagnon:HideFrame('guild')
 end

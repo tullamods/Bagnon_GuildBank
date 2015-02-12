@@ -8,49 +8,39 @@ local MoneyFrame = Bagnon:NewClass('GuildMoneyFrame', 'Frame', Bagnon.MoneyFrame
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 
 
---[[ Frame Events ]]--
+--[[ Interaction ]]--
 
 function MoneyFrame:OnClick(button)
 	local money = GetCursorMoney() or 0
 	if money > 0 then
-		self:DepositMoney(money)
-		return
-	end
+		DepositGuildBankMoney(money)
+		DropCursorMoney()
 
-	if button == 'LeftButton' and (not IsShiftKeyDown()) then
-		self:ShowDepositDialog()
-		return
-	end
+	elseif button == 'LeftButton' and not IsShiftKeyDown() then
+		PlaySound('igMainMenuOption')
+		StaticPopup_Hide('GUILDBANK_WITHDRAW')
 
-	if button == 'RightButton' or (button == 'LeftButton' and IsShiftKeyDown())  then
-		self:ShowWithdrawDialog()
-		return
+		if StaticPopup_Visible('GUILDBANK_DEPOSIT') then
+			StaticPopup_Hide('GUILDBANK_DEPOSIT')
+		else
+			StaticPopup_Show('GUILDBANK_DEPOSIT')
+		end
+	else
+		if CanWithdrawGuildBankMoney() then
+			PlaySound('igMainMenuOption')
+			StaticPopup_Hide('GUILDBANK_DEPOSIT')
+			
+			if StaticPopup_Visible('GUILDBANK_WITHDRAW') then
+				StaticPopup_Hide('GUILDBANK_WITHDRAW')
+			else
+				StaticPopup_Show('GUILDBANK_WITHDRAW')
+			end
+		end
 	end
 end
 
 function MoneyFrame:OnEnter()
 	GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
-	self:UpdateTooltip()
-end
-
-function MoneyFrame:OnLeave()
-	if GameTooltip:IsOwned(self) then
-		GameTooltip:Hide()
-	end
-end
-
-
---[[ Actions ]]--
-
-function MoneyFrame:UpdateEvents()
-	self:UnregisterAllEvents()
-	
-	if self:IsVisible() then
-		self:RegisterEvent('GUILDBANK_UPDATE_MONEY')
-	end
-end
-
-function MoneyFrame:UpdateTooltip()
 	GameTooltip:SetText(L.TipFunds)
 	GameTooltip:AddLine(L.TipDeposit, 1, 1, 1)
 
@@ -66,39 +56,19 @@ function MoneyFrame:UpdateTooltip()
 	GameTooltip:Show()
 end
 
-function MoneyFrame:DepositMoney(money)
-	DepositGuildBankMoney(money)
-	DropCursorMoney()
-end
-
-function MoneyFrame:ShowDepositDialog()
-	PlaySound('igMainMenuOption')
-
-	StaticPopup_Hide('GUILDBANK_WITHDRAW')
-	if StaticPopup_Visible('GUILDBANK_DEPOSIT') then
-		StaticPopup_Hide('GUILDBANK_DEPOSIT')
-	else
-		StaticPopup_Show('GUILDBANK_DEPOSIT')
-	end
-end
-
-function MoneyFrame:ShowWithdrawDialog()
-	if not CanWithdrawGuildBankMoney() then
-		return
-	end
-
-	PlaySound('igMainMenuOption')
-	StaticPopup_Hide('GUILDBANK_DEPOSIT')
-	
-	if StaticPopup_Visible('GUILDBANK_WITHDRAW') then
-		StaticPopup_Hide('GUILDBANK_WITHDRAW')
-	else
-		StaticPopup_Show('GUILDBANK_WITHDRAW')
+function MoneyFrame:OnLeave()
+	if GameTooltip:IsOwned(self) then
+		GameTooltip:Hide()
 	end
 end
 
 
---[[ Properties ]]--
+--[[ Update ]]--
+
+function MoneyFrame:RegisterEvents()
+	self:RegisterEvent('GUILDBANK_UPDATE_MONEY', 'Update')
+	self:Update()
+end
 
 function MoneyFrame:GetMoney()
 	return GetGuildBankMoney()

@@ -9,7 +9,7 @@ local EditFrame = Bagnon:NewClass('EditFrame', 'ScrollFrame')
 
 --[[ Constructor ]]--
 
-function EditFrame:New(frameID, parent)
+function EditFrame:New(parent)
 	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent, 'UIPanelScrollFrameTemplate'))
 	local bg = f.ScrollBar:CreateTexture()
 	bg:SetTexture(0, 0, 0, .5)
@@ -31,20 +31,26 @@ function EditFrame:New(frameID, parent)
 	edit:SetSize(300, 300)
 	
 	f:SetScript('OnEvent', function(f, event, ...) f[event](f, ...) end)
-	f:SetScript('OnShow', f.OnShow)
+	f:SetScript('OnShow', f.RegisterEvents)
 	f:SetScript('OnHide', f.OnHide)
 	f:SetScrollChild(edit)
-	f:Hide()
+	f:RegisterEvents()
 	
-	f:RegisterMessage('GUILD_BANK_CLOSED')
-	f:RegisterEvent('GUILDBANK_UPDATE_TEXT')
-	f:RegisterEvent('GUILDBANK_TEXT_CHANGED')
-	f:RegisterEvent('PLAYER_LOGOUT')
 	return f
 end
 
 
---[[ Game Events ]]--
+--[[ Events ]]--
+
+function EditFrame:RegisterEvents()
+	QueryGuildBankText(GetCurrentGuildBankTab())
+
+	self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'Update')
+	self:RegisterEvent('GUILDBANK_UPDATE_TEXT')
+	self:RegisterEvent('GUILDBANK_TEXT_CHANGED')
+	self:RegisterEvent('PLAYER_LOGOUT')
+	self:Update()
+end
 
 function EditFrame:GUILDBANK_UPDATE_TEXT (tab)
 	if tab == GetCurrentGuildBankTab() then
@@ -62,8 +68,16 @@ function EditFrame:PLAYER_LOGOUT ()
 	self.OnEditFocusLost(self:GetScrollChild()) -- save on logout
 end
 
+function EditFrame:Update()
+	local text = GetGuildBankText(GetCurrentGuildBankTab()) or ''
+	local edit = self:GetScrollChild()
 
---[[ Editbox Events ]]--
+	edit.text = text
+	edit:SetText(text)
+end
+
+
+--[[ Interaction ]]--
 
 function EditFrame:OnUpdate(elapsed)
 	ScrollingEdit_OnUpdate(self, elapsed, self:GetParent())
@@ -89,27 +103,7 @@ function EditFrame:OnEditFocusLost()
 	end
 end
 
-
---[[ Frame Events ]]--
-
-function EditFrame:OnShow()
-	QueryGuildBankText(GetCurrentGuildBankTab())
-	self:RegisterMessage('GUILD_BANK_TAB_CHANGE')
-	self:Update()
-end
-
 function EditFrame:OnHide()
-	self:UnregisterMessage('GUILD_BANK_TAB_CHANGE')
+	self:UnregisterEvents()
 	self:GetScrollChild():ClearFocus()
 end
-
-function EditFrame:Update()
-	local text = GetGuildBankText(GetCurrentGuildBankTab()) or ''
-	local edit = self:GetScrollChild()
-
-	edit.text = text
-	edit:SetText(text)
-end
-
-EditFrame.GUILD_BANK_TAB_CHANGE = EditFrame.Update
-EditFrame.GUILD_BANK_CLOSED = EditFrame.Hide

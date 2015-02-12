@@ -3,10 +3,9 @@
 		A guild item slot button
 --]]
 
+local Cache = LibStub('LibItemCache-1.1')
 local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button', Bagnon.ItemSlot)
-ItemSlot.GUILDBANK_ITEM_LOCK_CHANGED = ItemSlot.UpdateLocked
-ItemSlot.GUILD_BANK_TAB_CHANGE = ItemSlot.Update
 ItemSlot.nextID = 0
 ItemSlot.unused = {}
 
@@ -73,11 +72,6 @@ function ItemSlot:OnReceiveDrag(button)
 	end
 end
 
-function ItemSlot:OnShow()
- 	self:RegisterEvent('GUILDBANK_ITEM_LOCK_CHANGED')
-	self:Update()
-end
-
 function ItemSlot:OnEnter()
 	if self:GetItem() then
  		self:AnchorTooltip()
@@ -115,7 +109,7 @@ function ItemSlot:UpdateCooldown() end
 --[[ Accessors ]]--
 
 function ItemSlot:GetInfo()
-	return LibStub('LibItemCache-1.1'):GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
+	return Cache:GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
 end
 
 function ItemSlot:GetSlot()
