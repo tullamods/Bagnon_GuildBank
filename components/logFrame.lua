@@ -1,11 +1,9 @@
 --[[
 	itemFrame.lua
-		An guild bank item slot container (by João Cardoso)
+		A guild bank tab log messages scrollframe
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local LogFrame = Bagnon:NewClass('LogFrame', 'ScrollFrame')
-
 local MESSAGE_PREFIX = '|cff009999   '
 local MAX_TRANSACTIONS = 24
 local TRANSACTION_HEIGHT = 13

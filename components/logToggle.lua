@@ -1,9 +1,8 @@
 --[[
 	logToggle.lua
-		A guild log toggle widget (by João Cardoso)
+		A guild log toggle widget
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
 local LogToggle = Bagnon:NewClass('LogToggle', 'CheckButton')
 LogToggle.Icons = {

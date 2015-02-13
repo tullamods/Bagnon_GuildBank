@@ -98,3 +98,7 @@ end
 function Frame:HasPlayerSelector()
 	return false
 end
+
+function Frame:IsCached()
+	return Bagnon:IsBagCached(self:GetPlayer(), 'guild1')
+end

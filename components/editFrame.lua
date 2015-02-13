@@ -1,9 +1,8 @@
 --[[
-	itemFrame.lua
-		An guild bank item slot container (by João Cardoso)
+	editFrame.lua
+		A guild bank tab notes edit frame
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local EditFrame = Bagnon:NewClass('EditFrame', 'ScrollFrame')
 
 

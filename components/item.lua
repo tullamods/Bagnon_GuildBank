@@ -3,8 +3,6 @@
 		A guild item slot button
 --]]
 
-local Cache = LibStub('LibItemCache-1.1')
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button', Bagnon.ItemSlot)
 ItemSlot.nextID = 0
 ItemSlot.unused = {}
@@ -109,7 +107,7 @@ function ItemSlot:UpdateCooldown() end
 --[[ Accessors ]]--
 
 function ItemSlot:GetInfo()
-	return Cache:GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
+	return Bagnon.Cache:GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
 end
 
 function ItemSlot:GetSlot()

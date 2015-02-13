@@ -3,7 +3,6 @@
 		A tab button object
 --]]
 
-local Bagnon = LibStub('AceAddon-3.0'):GetAddon('Bagnon')
 local TabFrame = Bagnon:NewClass('GuildTabFrame', 'Frame', Bagnon.BagFrame)
 local Tab = Bagnon:NewClass('GuildTab', 'CheckButton', Bagnon.Bag)
 TabFrame.Button = Tab
