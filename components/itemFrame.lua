@@ -5,6 +5,7 @@
 
 local ItemFrame = Bagnon:NewClass('GuildItemFrame', 'Frame', Bagnon.ItemFrame)
 ItemFrame.Button = Bagnon.GuildItemSlot
+ItemFrame.TransposeLayout = true
 
 function ItemFrame:RegisterEvents()
 	self:UnregisterEvents()
