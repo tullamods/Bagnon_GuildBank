@@ -20,12 +20,11 @@ function ItemSlot:Create()
 	return item
 end
 
-function ItemSlot:ConstructNewItemSlot(id)
+function ItemSlot:Construct(id)
 	return CreateFrame('Button', 'BagnonGuildItemSlot' .. id, nil, 'ContainerFrameItemButtonTemplate')
 end
 
-function ItemSlot:CanReuseBlizzardBagSlots()
-  return nil
+function ItemSlot:GetBlizzard()
 end
 
 

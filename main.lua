@@ -11,10 +11,12 @@ function GuildBank:OnEnable()
 end
 
 function GuildBank:GUILDBANKFRAME_OPENED()
+	Bagnon.Cache.AtGuild = true
 	Bagnon:ShowFrame('guild')
 	QueryGuildBankTab(GetCurrentGuildBankTab())
 end
 
 function GuildBank:GUILDBANKFRAME_CLOSED()
+	Bagnon.Cache.AtGuild = nil
 	Bagnon:HideFrame('guild')
 end
