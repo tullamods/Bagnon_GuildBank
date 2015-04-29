@@ -4,9 +4,9 @@
 --]]
 
 local LogFrame = Bagnon:NewClass('LogFrame', 'ScrollFrame')
-local MESSAGE_PREFIX = '|cff009999   '
-local MAX_TRANSACTIONS = 24
+local MESSAGE_PREFIX, _ = '|cff009999   '
 local TRANSACTION_HEIGHT = 13
+local MAX_TRANSACTIONS = 24
 
 
 --[[ Constructor ]]--
