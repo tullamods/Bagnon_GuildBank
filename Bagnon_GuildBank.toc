@@ -4,7 +4,7 @@
 ## Notes: Single window display for your guild bank
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
-## Version: 6.1.7
+## Version: 6.2.7
 
 localization\localization.xml
 components\components.xml
