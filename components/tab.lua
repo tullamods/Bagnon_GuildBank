@@ -56,14 +56,8 @@ function Tab:Update()
 	local name, icon, viewable = self:GetInfo()
 	if icon then
 		local color = viewable and 1 or 0.1
-		local iconID = tonumber(icon)
 
-		if iconID then
-			self.Icon:SetToFileData(iconID)
-		else
-			self.Icon:SetTexture(icon)
-		end
-		
+		self.Icon:SetTexture(tonumber(icon) or icon)
 		self.Icon:SetVertexColor(1, color, color)
 		self.Icon:SetDesaturated(not viewable)
 		self:UpdateStatus()
