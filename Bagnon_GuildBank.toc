@@ -1,10 +1,10 @@
-## Interface: 70000
+## Interface: 70100
 ## Title: |cff20ff20Bagnon Guild Bank|r
 ## Author: Tuller & Jaliborc (João Cardoso)
 ## Notes: Single window display for your guild bank
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
-## Version: 7.0.0
+## Version: 7.1.0b
 
 localization\localization.xml
 components\components.xml
