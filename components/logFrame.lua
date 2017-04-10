@@ -3,7 +3,9 @@
 		A guild bank tab log messages scrollframe
 --]]
 
-local LogFrame = Bagnon:NewClass('LogFrame', 'ScrollFrame')
+local MODULE, Module =  ...
+local LogFrame = Module.Addon:NewClass('LogFrame', 'ScrollFrame')
+
 local MESSAGE_PREFIX, _ = '|cff009999   '
 local TRANSACTION_HEIGHT = 13
 local MAX_TRANSACTIONS = 24
@@ -15,7 +17,7 @@ function LogFrame:New(parent)
 	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent,'FauxScrollFrameTemplate'))
 	f:SetScript('OnVerticalScroll', f.OnScroll)
 	f:SetScript('OnHide', f.UnregisterEvents)
-	
+
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetScript('OnHyperlinkClick', f.OnHyperlink)
 	messages:SetFontObject(GameFontHighlight)
@@ -24,11 +26,11 @@ function LogFrame:New(parent)
 	messages:SetFading(false)
 	messages:SetAllPoints()
 	f.messages = messages
-	
+
 	local bg = f.ScrollBar:CreateTexture()
 	bg:SetTexture(0, 0, 0, .5)
 	bg:SetAllPoints()
-	
+
 	return f
 end
 
@@ -64,13 +66,13 @@ function LogFrame:Display(type)
 		QueryGuildBankLog(MAX_GUILDBANK_TABS + 1)
 	else
 		QueryGuildBankLog(GetCurrentGuildBankTab())
-	end	
+	end
 end
 
 function LogFrame:Update()
 	self:UpdateScroll()
 	self.messages:Clear()
-		
+
 	if self.isMoney then
 		self:UpdateMoney()
 	else
@@ -81,7 +83,7 @@ end
 function LogFrame:UpdateTransactions()
 	local type, name, itemLink, count, tab1, tab2, year, month, day, hour
 	local msg
-	
+
 	for i=1, self.numTransactions do
 		type, name, itemLink, count, tab1, tab2, year, month, day, hour = self:ProcessLine(GetGuildBankTransaction(self.tab, i))
 
@@ -98,7 +100,7 @@ function LogFrame:UpdateTransactions()
 		elseif type == "move" then
 			msg = format(GUILDBANK_MOVE_FORMAT, name, itemLink, count, GetGuildBankTabInfo(tab1), GetGuildBankTabInfo(tab2))
 		end
-		
+
 		self:AddLine(msg, year, month, day, hour)
 	end
 end
@@ -106,11 +108,11 @@ end
 function LogFrame:UpdateMoney()
 	local type, name, amount, year, month, day, hour
 	local msg, money
-	
+
 	for i = 1, self.numTransactions do
 		type, name, amount, year, month, day, hour = self:ProcessLine(GetGuildBankMoneyTransaction(i))
 		money = GetDenominationsFromCopper(amount)
-		
+
 		if ( type == "deposit" ) then
 			msg = format(GUILDBANK_DEPOSIT_MONEY_FORMAT, name, money)
 		elseif ( type == "withdraw" ) then
@@ -124,7 +126,7 @@ function LogFrame:UpdateMoney()
 		elseif ( type == "depositSummary" ) then
 			msg = format(GUILDBANK_AWARD_MONEY_SUMMARY_FORMAT, money)
 		end
-		
+
 		self:AddLine(msg, year, month, day, hour)
 	end
 end
@@ -132,7 +134,7 @@ end
 function LogFrame:UpdateScroll()
 	self.tab = GetCurrentGuildBankTab()
 	self.numTransactions = self.isMoney and GetNumGuildBankMoneyTransactions() or GetNumGuildBankTransactions(self.tab)
-	
+
 	if self.numTransactions > 23 then
 		self.messages:SetScrollOffset(FauxScrollFrame_GetOffset(self))
 		self.ScrollBar:Show()
@@ -140,7 +142,7 @@ function LogFrame:UpdateScroll()
 		self.messages:SetScrollOffset(0)
 		self.ScrollBar:Hide()
 	end
-	
+
 	FauxScrollFrame_Update(self, self.numTransactions, MAX_TRANSACTIONS, TRANSACTION_HEIGHT, _,_,_,_,_,_, true)
 end
 

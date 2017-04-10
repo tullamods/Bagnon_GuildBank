@@ -3,7 +3,9 @@
 		A guild item slot button
 --]]
 
-local ItemSlot = Bagnon:NewClass('GuildItemSlot', 'Button', Bagnon.ItemSlot)
+local MODULE, Module =  ...
+local Addon = Module.Addon
+local ItemSlot = Addon:NewClass('GuildItemSlot', 'Button', Addon.ItemSlot)
 ItemSlot.nextID = 0
 ItemSlot.unused = {}
 
@@ -11,7 +13,7 @@ ItemSlot.unused = {}
 --[[ Constructor ]]--
 
 function ItemSlot:Create()
-	local item = Bagnon.ItemSlot.Create(self)
+	local item = Addon.ItemSlot.Create(self)
 	item:SetScript('OnReceiveDrag', self.OnReceiveDrag)
 	item:SetScript('OnDragStart', self.OnDragStart)
 	item:SetScript('OnClick', self.OnClick)
@@ -21,7 +23,7 @@ function ItemSlot:Create()
 end
 
 function ItemSlot:Construct(id)
-	return CreateFrame('Button', 'BagnonGuildItemSlot' .. id, nil, 'ContainerFrameItemButtonTemplate')
+	return CreateFrame('Button', MODULE .. 'ItemSlot' .. id, nil, 'ContainerFrameItemButtonTemplate')
 end
 
 function ItemSlot:GetBlizzard()
@@ -106,7 +108,7 @@ function ItemSlot:UpdateCooldown() end
 --[[ Accessors ]]--
 
 function ItemSlot:GetInfo()
-	return Bagnon.Cache:GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
+	return Addon.Cache:GetItemInfo(self:GetPlayer(), 'guild' .. tostring(self:GetBag()), self:GetID())
 end
 
 function ItemSlot:GetSlot()

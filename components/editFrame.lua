@@ -3,7 +3,8 @@
 		A guild bank tab notes edit frame
 --]]
 
-local EditFrame = Bagnon:NewClass('EditFrame', 'ScrollFrame')
+local MODULE, Module =  ...
+local EditFrame = Module.Addon:NewClass('EditFrame', 'ScrollFrame')
 
 
 --[[ Constructor ]]--
@@ -13,7 +14,7 @@ function EditFrame:New(parent)
 	local bg = f.ScrollBar:CreateTexture()
 	bg:SetTexture(0, 0, 0, .5)
 	bg:SetAllPoints()
-	
+
 	local edit = CreateFrame('EditBox', nil, f)
 	edit:SetScript('OnEscapePressed', edit.ClearFocus)
 	edit:SetScript('OnEditFocusLost', self.OnEditFocusLost)
@@ -21,20 +22,20 @@ function EditFrame:New(parent)
 	edit:SetScript('OnTextChanged', self.OnTextChanged)
 	edit:SetScript('OnMouseDown', self.OnMouseDown)
 	edit:SetScript('OnUpdate', self.OnUpdate)
-	
+
 	edit:SetFontObject(GameFontHighlightSmall)
 	edit:SetAutoFocus(false)
 	edit:SetMaxLetters(500)
 	edit:SetMultiLine(true)
 	edit:SetPoint('TOPLEFT')
 	edit:SetSize(300, 300)
-	
+
 	f:SetScript('OnEvent', function(f, event, ...) f[event](f, ...) end)
 	f:SetScript('OnShow', f.RegisterEvents)
 	f:SetScript('OnHide', f.OnHide)
 	f:SetScrollChild(edit)
 	f:RegisterEvents()
-	
+
 	return f
 end
 

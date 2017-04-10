@@ -3,8 +3,9 @@
 		A guild log toggle widget
 --]]
 
-local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
-local LogToggle = Bagnon:NewClass('LogToggle', 'CheckButton')
+local MODULE, Module =  ...
+local L = LibStub('AceLocale-3.0'):GetLocale(Module.ADDON)
+local LogToggle = Module.Addon:NewClass('LogToggle', 'CheckButton')
 LogToggle.Icons = {
 	[[Interface\Icons\INV_Crate_03]],
 	[[Interface\Icons\INV_Misc_Coin_01]],
@@ -50,7 +51,7 @@ function LogToggle:New(parent, type)
 	b:SetScript('OnLeave', b.OnLeave)
 	b:SetScript('OnHide', b.OnHide)
 	b.type = type
-	
+
 	return b
 end
 
@@ -67,7 +68,7 @@ function LogToggle:OnEnter()
 	else
 		GameTooltip:SetOwner(self, 'ANCHOR_RIGHT')
 	end
-	
+
 	GameTooltip:SetText(L['Log' .. self.type])
 end
 

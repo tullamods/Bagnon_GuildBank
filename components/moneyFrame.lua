@@ -3,8 +3,10 @@
 		A money frame object
 --]]
 
-local MoneyFrame = Bagnon:NewClass('GuildMoneyFrame', 'Frame', Bagnon.MoneyFrame)
-local L = LibStub('AceLocale-3.0'):GetLocale('Bagnon-GuildBank')
+local MODULE, Module =  ...
+local Addon = Module.Addon
+local MoneyFrame = Addon:NewClass('GuildMoneyFrame', 'Frame', Addon.MoneyFrame)
+local L = LibStub('AceLocale-3.0'):GetLocale(Module.ADDON)
 
 
 --[[ Interaction ]]--
@@ -28,7 +30,7 @@ function MoneyFrame:OnClick(button)
 		if CanWithdrawGuildBankMoney() then
 			PlaySound('igMainMenuOption')
 			StaticPopup_Hide('GUILDBANK_DEPOSIT')
-			
+
 			if StaticPopup_Visible('GUILDBANK_WITHDRAW') then
 				StaticPopup_Hide('GUILDBANK_WITHDRAW')
 			else

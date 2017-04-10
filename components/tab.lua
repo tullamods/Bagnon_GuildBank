@@ -3,8 +3,10 @@
 		A tab button object
 --]]
 
-local TabFrame = Bagnon:NewClass('GuildTabFrame', 'Frame', Bagnon.BagFrame)
-local Tab = Bagnon:NewClass('GuildTab', 'CheckButton', Bagnon.Bag)
+local MODULE, Module =  ...
+local Addon = Module.Addon
+local TabFrame = Addon:NewClass('GuildTabFrame', 'Frame', Addon.BagFrame)
+local Tab = Addon:NewClass('GuildTab', 'CheckButton', Addon.Bag)
 TabFrame.Button = Tab
 
 
@@ -28,7 +30,7 @@ end
 function Tab:OnClick()
 	local tab = self:GetID()
 	local _,_, viewable = self:GetInfo()
-	
+
 	if viewable then
 		SetCurrentGuildBankTab(tab)
 		QueryGuildBankTab(tab)
