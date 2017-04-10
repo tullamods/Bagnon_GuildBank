@@ -15,6 +15,7 @@ local MAX_TRANSACTIONS = 24
 
 function LogFrame:New(parent)
 	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent,'FauxScrollFrameTemplate'))
+	f:RegisterFrameMessage('SHOW_LOG', 'OnLog')
 	f:SetScript('OnVerticalScroll', f.OnScroll)
 	f:SetScript('OnHide', f.UnregisterEvents)
 
@@ -35,12 +36,25 @@ function LogFrame:New(parent)
 end
 
 
---[[ Interaction ]]--
+--[[ Events ]]--
+
+function LogFrame:OnLog(_, logID)
+	if logID < 3 then
+		self.isMoney = logID == 2
+		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'Update')
+		self:RegisterEvent('GUILDBANKLOG_UPDATE', 'Update')
+		self:Update()
+
+		if self.isMoney then
+			QueryGuildBankLog(MAX_GUILDBANK_TABS + 1)
+		else
+			QueryGuildBankLog(GetCurrentGuildBankTab())
+		end
+	end
+end
 
 function LogFrame:OnScroll(offset)
-	if self.type ~= 3 then
-		FauxScrollFrame_OnVerticalScroll(self, offset, TRANSACTION_HEIGHT, self.UpdateScroll)
-	end
+	FauxScrollFrame_OnVerticalScroll(self, offset, TRANSACTION_HEIGHT, self.UpdateScroll)
 end
 
 function LogFrame:OnHyperlink(...)
@@ -55,19 +69,6 @@ end
 
 
 --[[ Update ]]--
-
-function LogFrame:Display(type)
-	self.isMoney = type == 2
-	self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'Update')
-	self:RegisterEvent('GUILDBANKLOG_UPDATE', 'Update')
-	self:Update()
-
-	if self.isMoney then
-		QueryGuildBankLog(MAX_GUILDBANK_TABS + 1)
-	else
-		QueryGuildBankLog(GetCurrentGuildBankTab())
-	end
-end
 
 function LogFrame:Update()
 	self:UpdateScroll()

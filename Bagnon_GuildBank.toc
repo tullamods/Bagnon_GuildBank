@@ -6,6 +6,5 @@
 ## LoadOnDemand: 1
 ## Version: 7.1.1
 
-localization\localization.xml
 components\components.xml
 main.lua

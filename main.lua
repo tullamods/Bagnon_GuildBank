@@ -3,19 +3,24 @@
 		Show and hide frame
 --]]
 
-local GuildBank = Bagnon:NewModule('GuildBank', 'AceEvent-3.0')
+local MODULE, Module =  ...
+Module.ADDON = MODULE:find('^(%w)_')
+Module.Addon = _G[Module.ADDON]
+
+local Addon = Module.Addon
+local GuildBank = Addon:NewModule('GuildBank', Addon)
 
 function GuildBank:OnEnable()
-	self:RegisterEvent('GUILDBANKFRAME_CLOSED', 'OnClosed')
+	self:RegisterEvent('GUILDBANKFRAME_CLOSED', 'OnClose')
 end
 
 function GuildBank:OnOpen()
-	Bagnon.Cache.AtGuild = true
-	Bagnon:ShowFrame('guild')
+	Addon.Cache.AtGuild = true
+	Addon:ShowFrame('guild')
 	QueryGuildBankTab(GetCurrentGuildBankTab())
 end
 
-function GuildBank:OnClosed()
-	Bagnon.Cache.AtGuild = nil
-	Bagnon:HideFrame('guild')
+function GuildBank:OnClose()
+	Addon.Cache.AtGuild = nil
+	Addon:HideFrame('guild')
 end

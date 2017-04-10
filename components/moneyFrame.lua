@@ -42,7 +42,7 @@ end
 
 function MoneyFrame:OnEnter()
 	GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
-	GameTooltip:SetText(L.TipFunds)
+	GameTooltip:SetText(L.GuildFunds)
 	GameTooltip:AddLine(L.TipDeposit, 1, 1, 1)
 
 	if CanWithdrawGuildBankMoney() then
