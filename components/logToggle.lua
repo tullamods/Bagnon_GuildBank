@@ -21,31 +21,39 @@ LogToggle.Titles = {
 }
 
 
---[[ Button ]]--
+--[[ Constructors ]]--
 
-function LogToggle:New(parent, type)
+function LogToggle:NewSet(parent)
+	local set = {}
+	for id in ipairs(self.Icons) do
+		set[id] = self:New(parent, id)
+	end
+	return set
+end
+
+function LogToggle:New(parent, id)
 	local b = self:Bind(CreateFrame('CheckButton', nil, parent, ADDON..'MenuCheckButtonTemplate'))
-	b.Icon:SetTexture(self.Icons[type])
+	b.Icon:SetTexture(self.Icons[id])
 	b:RegisterFrameMessage('SHOW_LOG', 'OnLog')
 	b:SetScript('OnClick', b.OnClick)
-	b:SetScript('OnHide', b.OnHide)
-	b.type = type
+	b.id = id
 
 	return b
 end
 
-function LogToggle:OnLog(_, type)
-	self:SetChecked(type == self.type)
+
+--[[ Events ]]--
+
+function LogToggle:OnLog(_, logID)
+	self:SetChecked(logID == self.id)
 end
 
 function LogToggle:OnClick()
-	self:SendFrameMessage('SHOW_LOG', self:GetChecked() and self.type)
+	self:SendFrameMessage('SHOW_LOG', self:GetChecked() and self.id)
 end
 
-function LogToggle:OnHide()
-	self:SendFrameMessage('SHOW_LOG', nil)
-end
-
-function LogToggle:OnTooltip()
-	GameTooltip:SetText(self.Titles[type]))
+function LogToggle:OnEnter()
+	GameTooltip:SetOwner ...
+	GameTooltip:SetText(self.Titles[self.id]))
+	GameTooltip:Show()
 end

@@ -9,7 +9,7 @@ local MoneyFrame = Addon:NewClass('GuildMoneyFrame', 'Frame', Addon.MoneyFrame)
 local L = LibStub('AceLocale-3.0'):GetLocale(Module.ADDON)
 
 
---[[ Interaction ]]--
+--[[ Frame Events ]]--
 
 function MoneyFrame:OnClick(button)
 	local money = GetCursorMoney() or 0

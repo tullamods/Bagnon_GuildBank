@@ -20,26 +20,29 @@ for i = 1, MAX_GUILDBANK_TABS do
 end
 
 
---[[ Interaction ]]--
+--[[ Constructor ]]--
 
-function Frame:ShowPanel(kind)
-	self:FadeOutFrame(self.itemFrame)
-	self:FadeOutFrame(self.logFrame)
-	self:FadeOutFrame(self.editFrame)
+function Frame:New(id)
+	local f = Addon.Frame.New(self, id)
 
-	if not kind then
-		self:FadeInFrame(self.itemFrame)
-	elseif kind == 3 then
-		self:FadeInFrame(self.editFrame or self:CreateEditFrame())
-	else
-		self:CreateLogFrame():Display(kind)
-		self:FadeInFrame(self.logFrame)
-	end
+	local log = Addon.LogFrame:New(f)
+	log:SetPoint('BOTTOMRIGHT', f.itemFrame, -27, 5)
+	log:SetPoint('TOPLEFT', f.itemFrame, 5, -5)
 
-	for i, log in ipairs(self.logs) do
-		log:SetChecked(kind == i)
-	end
+	local edit = Addon.EditFrame:New(f)
+	edit:SetAllPoints(log)
+
+	f.logToggles = Addon.LogToggle:NewSet(f)
+	f.log, f.editFrame = log, edit
 end
+
+function Frame:RegisterMessages()
+	Addon.Frame.RegisterMessages(self)
+	self:RegisterFrameMessage('SHOW_LOG', 'OnLog')
+end
+
+
+--[[ Events ]]--
 
 function Frame:OnHide()
 	Addon.Frame.OnHide(self)
@@ -50,45 +53,24 @@ function Frame:OnHide()
 	CloseGuildBankFrame()
 end
 
-
---[[ Components ]]--
-
-function Frame:GetSpecificButtons(list)
-	for i, log in ipairs(self.logs or self:CreateSpecificButtons()) do
-		tinsert(list, log)
-	end
-end
-
-function Frame:CreateSpecificButtons()
-	self.logs = {}
-
-	for i = 1, #Addon.LogToggle.Icons do
-		self.logs[i] = Addon.LogToggle:New(self, i)
-	end
-
-	return self.logs
-end
-
-function Frame:CreateLogFrame()
-	local log = Addon.LogFrame:New(self)
-	log:SetPoint('BOTTOMRIGHT', self.itemFrame, -27, 5)
-	log:SetPoint('TOPLEFT', self.itemFrame, 5, -5)
-
-	self.logFrame = log
-	return log
-end
-
-function Frame:CreateEditFrame()
-	local edit = Addon.EditFrame:New(self)
-	edit:SetPoint('BOTTOMRIGHT', self.itemFrame, -27, 5)
-	edit:SetPoint('TOPLEFT', self.itemFrame, 5, -5)
-
-	self.editFrame = edit
-	return edit
+function Frame:OnLog(_, logID)
+	self.itemFrame:SetShown(not logID)
+	self.editFrame:SetShown(logID == 3)
+	self.log:SetShown(logID and logID < 3)
 end
 
 
 --[[ Proprieties ]]--
+
+function Frame:AddSpecificButtons(buttonList)
+	for i, toggle in ipairs(self.logToggles) do
+		tinsert(buttonList, toggle)
+	end
+end
+
+function Frame:IsCached()
+	return Addon:IsBagCached(self:GetPlayer(), 'guild1')
+end
 
 function Frame:HasBagFrame()
 	return true
@@ -100,8 +82,4 @@ end
 
 function Frame:HasPlayerSelector()
 	return false
-end
-
-function Frame:IsCached()
-	return Addon:IsBagCached(self:GetPlayer(), 'guild1')
 end

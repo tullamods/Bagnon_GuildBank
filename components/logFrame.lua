@@ -14,11 +14,7 @@ local MAX_TRANSACTIONS = 24
 --[[ Constructor ]]--
 
 function LogFrame:New(parent)
-	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent,'FauxScrollFrameTemplate'))
-	f:RegisterFrameMessage('SHOW_LOG', 'OnLog')
-	f:SetScript('OnVerticalScroll', f.OnScroll)
-	f:SetScript('OnHide', f.UnregisterEvents)
-
+	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent, 'FauxScrollFrameTemplate'))
 	local messages = CreateFrame('ScrollingMessageFrame', nil, f)
 	messages:SetScript('OnHyperlinkClick', f.OnHyperlink)
 	messages:SetFontObject(GameFontHighlight)
@@ -26,11 +22,15 @@ function LogFrame:New(parent)
 	messages:SetMaxLines(128)
 	messages:SetFading(false)
 	messages:SetAllPoints()
-	f.messages = messages
 
 	local bg = f.ScrollBar:CreateTexture()
 	bg:SetTexture(0, 0, 0, .5)
 	bg:SetAllPoints()
+
+	f:RegisterFrameMessage('SHOW_LOG', 'OnLog')
+	f:SetScript('OnVerticalScroll', f.OnScroll)
+	f:SetScript('OnHide', f.UnregisterAllEvents)
+	f.messages = messages
 
 	return f
 end
