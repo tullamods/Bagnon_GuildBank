@@ -3,15 +3,32 @@
 		A money frame object
 --]]
 
-local MODULE, Module =  ...
-local Addon = Module.Addon
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
+local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
 local MoneyFrame = Addon:NewClass('GuildMoneyFrame', 'Frame', Addon.MoneyFrame)
-local L = LibStub('AceLocale-3.0'):GetLocale(Module.ADDON)
+MoneyFrame.Type = 'GUILDBANK'
+
+
+--[[ Update ]]--
+
+function MoneyFrame:RegisterEvents()
+	self:RegisterEvent('GUILDBANK_UPDATE_MONEY', 'Update')
+	self:Update()
+end
+
+function MoneyFrame:GetMoney()
+	return GetGuildBankMoney()
+end
 
 
 --[[ Frame Events ]]--
 
 function MoneyFrame:OnClick(button)
+	if self:IsCached() then
+		return
+	end
+
 	local money = GetCursorMoney() or 0
 	if money > 0 then
 		DepositGuildBankMoney(money)
@@ -41,14 +58,14 @@ function MoneyFrame:OnClick(button)
 end
 
 function MoneyFrame:OnEnter()
-	GameTooltip:SetOwner(self, 'ANCHOR_TOPRIGHT')
+	GameTooltip:SetOwner(self, self:GetTop() > (GetScreenHeight() / 2) and 'ANCHOR_BOTTOM' or 'ANCHOR_TOP')
 	GameTooltip:SetText(L.GuildFunds)
 	GameTooltip:AddLine(L.TipDeposit, 1, 1, 1)
 
 	if CanWithdrawGuildBankMoney() then
 		local withdrawMoney = min(GetGuildBankWithdrawMoney(), GetGuildBankMoney())
 		if withdrawMoney > 0 then
-			GameTooltip:AddLine(format(L.TipWithdrawRemaining, self:GetCoinsText(withdrawMoney)), 1,1,1)
+			GameTooltip:AddLine(format(L.TipWithdrawRemaining, GetCoinTextureString(withdrawMoney, 11)), 1,1,1)
 		else
 			GameTooltip:AddLine(L.TipWithdraw, 1,1,1)
 		end
@@ -61,16 +78,4 @@ function MoneyFrame:OnLeave()
 	if GameTooltip:IsOwned(self) then
 		GameTooltip:Hide()
 	end
-end
-
-
---[[ Update ]]--
-
-function MoneyFrame:RegisterEvents()
-	self:RegisterEvent('GUILDBANK_UPDATE_MONEY', 'Update')
-	self:Update()
-end
-
-function MoneyFrame:GetMoney()
-	return GetGuildBankMoney()
 end

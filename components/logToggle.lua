@@ -3,9 +3,8 @@
 		A guild log toggle widget
 --]]
 
-local MODULE, Module =  ...
-local ADDON, Addon = Module.ADDON, Module.Addon
-local L = LibStub('AceLocale-3.0'):GetLocale(ADDON)
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
 local LogToggle = Addon:NewClass('LogToggle', 'CheckButton')
 
 LogToggle.Icons = {
@@ -33,9 +32,11 @@ end
 
 function LogToggle:New(parent, id)
 	local b = self:Bind(CreateFrame('CheckButton', nil, parent, ADDON..'MenuCheckButtonTemplate'))
-	b.Icon:SetTexture(self.Icons[id])
-	b:RegisterFrameMessage('SHOW_LOG', 'OnLog')
+	b:RegisterFrameMessage('LOG_SELECTED', 'OnLogSelected')
 	b:SetScript('OnClick', b.OnClick)
+	b:SetScript('OnEnter', b.OnEnter)
+	b:SetScript('OnLeave', b.OnLeave)
+	b.Icon:SetTexture(self.Icons[id])
 	b.id = id
 
 	return b
@@ -44,16 +45,22 @@ end
 
 --[[ Events ]]--
 
-function LogToggle:OnLog(_, logID)
+function LogToggle:OnLogSelected(_, logID)
 	self:SetChecked(logID == self.id)
 end
 
 function LogToggle:OnClick()
-	self:SendFrameMessage('SHOW_LOG', self:GetChecked() and self.id)
+	self:SendFrameMessage('LOG_SELECTED', self:GetChecked() and self.id)
 end
 
 function LogToggle:OnEnter()
-	GameTooltip:SetOwner ...
-	GameTooltip:SetText(self.Titles[self.id]))
+	GameTooltip:SetOwner(self, (self:GetRight() > (GetScreenWidth() / 2)) and 'ANCHOR_LEFT' or 'ANCHOR_RIGHT')
+	GameTooltip:SetText(self.Titles[self.id])
 	GameTooltip:Show()
+end
+
+function LogToggle:OnLeave()
+	if GameTooltip:IsOwned(self) then
+		GameTooltip:Hide()
+	end
 end

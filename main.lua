@@ -3,24 +3,21 @@
 		Show and hide frame
 --]]
 
-local MODULE, Module =  ...
-Module.ADDON = MODULE:find('^(%w)_')
-Module.Addon = _G[Module.ADDON]
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
+local Guild = Bagnon:NewModule('GuildBank', Addon)
 
-local Addon = Module.Addon
-local GuildBank = Addon:NewModule('GuildBank', Addon)
-
-function GuildBank:OnEnable()
+function Guild:OnEnable()
 	self:RegisterEvent('GUILDBANKFRAME_CLOSED', 'OnClose')
 end
 
-function GuildBank:OnOpen()
+function Guild:OnOpen()
 	Addon.Cache.AtGuild = true
 	Addon:ShowFrame('guild')
 	QueryGuildBankTab(GetCurrentGuildBankTab())
 end
 
-function GuildBank:OnClose()
+function Guild:OnClose()
 	Addon.Cache.AtGuild = nil
 	Addon:HideFrame('guild')
 end

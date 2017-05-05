@@ -3,18 +3,15 @@
 		A guild bank tab notes edit frame
 --]]
 
-local MODULE, Module =  ...
-local EditFrame = Module.Addon:NewClass('EditFrame', 'ScrollFrame')
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
+local EditFrame = Addon:NewClass('EditFrame', 'ScrollFrame')
 
 
 --[[ Constructor ]]--
 
 function EditFrame:New(parent)
 	local f = self:Bind(CreateFrame('ScrollFrame', parent:GetName() .. 'LogFrame', parent, 'UIPanelScrollFrameTemplate'))
-	local bg = f.ScrollBar:CreateTexture()
-	bg:SetTexture(0, 0, 0, .5)
-	bg:SetAllPoints()
-
 	local edit = CreateFrame('EditBox', nil, f)
 	edit:SetScript('OnEscapePressed', edit.ClearFocus)
 	edit:SetScript('OnEditFocusLost', self.OnEditFocusLost)
@@ -22,13 +19,17 @@ function EditFrame:New(parent)
 	edit:SetScript('OnTextChanged', self.OnTextChanged)
 	edit:SetScript('OnMouseDown', self.OnMouseDown)
 	edit:SetScript('OnUpdate', self.OnUpdate)
-
-	edit:SetFontObject(GameFontHighlightSmall)
+	edit:SetFontObject(GameFontHighlight)
+	edit:SetPoint('TOPLEFT')
+	edit:SetSize(500, 300)
 	edit:SetAutoFocus(false)
 	edit:SetMaxLetters(500)
 	edit:SetMultiLine(true)
-	edit:SetPoint('TOPLEFT')
-	edit:SetSize(300, 300)
+
+	local bg = f:CreateTexture()
+	bg:SetColorTexture(0, 0, 0, .2)
+	bg:SetPoint('TOPLEFT', f)
+	bg:SetPoint('BOTTOMRIGHT', f.ScrollBar, 0, -16)
 
 	f:SetScript('OnEvent', function(f, event, ...) f[event](f, ...) end)
 	f:SetScript('OnShow', f.RegisterEvents)
@@ -45,6 +46,7 @@ end
 function EditFrame:RegisterEvents()
 	QueryGuildBankText(GetCurrentGuildBankTab())
 
+	self:RegisterMessage('GUILD_TAB_CHANGED', 'Update')
 	self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'Update')
 	self:RegisterEvent('GUILDBANK_UPDATE_TEXT')
 	self:RegisterEvent('GUILDBANK_TEXT_CHANGED')
@@ -71,7 +73,6 @@ end
 function EditFrame:Update()
 	local text = GetGuildBankText(GetCurrentGuildBankTab()) or ''
 	local edit = self:GetScrollChild()
-
 	edit.text = text
 	edit:SetText(text)
 end

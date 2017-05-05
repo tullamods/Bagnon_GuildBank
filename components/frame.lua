@@ -3,11 +3,11 @@
 		A specialized version of the bagnon frame for guild banks
 --]]
 
-local MODULE, Module =  ...
-local Addon = Module.Addon
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
 local Frame = Addon:NewClass('GuildFrame', 'Frame', Addon.Frame)
 
-Frame.Title = LibStub('AceLocale-3.0'):GetLocale(Module.ADDON).GuildTitle
+Frame.Title = LibStub('AceLocale-3.0'):GetLocale(ADDON).TitleGuild
 Frame.MoneyFrame = Addon.GuildMoneyFrame
 Frame.ItemFrame = Addon.GuildItemFrame
 Frame.BagFrame = Addon.GuildTabFrame
@@ -24,21 +24,24 @@ end
 
 function Frame:New(id)
 	local f = Addon.Frame.New(self, id)
-
 	local log = Addon.LogFrame:New(f)
-	log:SetPoint('BOTTOMRIGHT', f.itemFrame, -27, 5)
-	log:SetPoint('TOPLEFT', f.itemFrame, 5, -5)
+	log:SetPoint('BOTTOMRIGHT', -10, 35)
+	log:SetPoint('TOPLEFT', 10, -70)
+	log:Hide()
 
 	local edit = Addon.EditFrame:New(f)
-	edit:SetAllPoints(log)
+	edit:SetPoint('BOTTOMRIGHT', -32, 35)
+	edit:SetPoint('TOPLEFT', 10, -75)
+	edit:Hide()
 
 	f.logToggles = Addon.LogToggle:NewSet(f)
 	f.log, f.editFrame = log, edit
+	return f
 end
 
 function Frame:RegisterMessages()
 	Addon.Frame.RegisterMessages(self)
-	self:RegisterFrameMessage('SHOW_LOG', 'OnLog')
+	self:RegisterFrameMessage('LOG_SELECTED', 'OnLogSelected')
 end
 
 
@@ -53,7 +56,7 @@ function Frame:OnHide()
 	CloseGuildBankFrame()
 end
 
-function Frame:OnLog(_, logID)
+function Frame:OnLogSelected(_, logID)
 	self.itemFrame:SetShown(not logID)
 	self.editFrame:SetShown(logID == 3)
 	self.log:SetShown(logID and logID < 3)
@@ -62,24 +65,21 @@ end
 
 --[[ Proprieties ]]--
 
-function Frame:AddSpecificButtons(buttonList)
+function Frame:ListMenuButtons()
 	for i, toggle in ipairs(self.logToggles) do
-		tinsert(buttonList, toggle)
+		tinsert(self.menuButtons, toggle)
 	end
+
+	Addon.Frame.ListMenuButtons(self)
 end
 
 function Frame:IsCached()
 	return Addon:IsBagCached(self:GetPlayer(), 'guild1')
 end
 
-function Frame:HasBagFrame()
-	return true
-end
-
+function Frame:HasPlayerSelector() end
+function Frame:HasSortButton() end
+function Frame:HasBagToggle() end
 function Frame:IsBagFrameShown()
 	return true
-end
-
-function Frame:HasPlayerSelector()
-	return false
 end

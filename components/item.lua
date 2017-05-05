@@ -3,8 +3,8 @@
 		A guild item slot button
 --]]
 
-local MODULE, Module =  ...
-local Addon = Module.Addon
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
 local ItemSlot = Addon:NewClass('GuildItemSlot', 'Button', Addon.ItemSlot)
 ItemSlot.nextID = 0
 ItemSlot.unused = {}

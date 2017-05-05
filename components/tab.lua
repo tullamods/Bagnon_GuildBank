@@ -3,8 +3,8 @@
 		A tab button object
 --]]
 
-local MODULE, Module =  ...
-local Addon = Module.Addon
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
 local TabFrame = Addon:NewClass('GuildTabFrame', 'Frame', Addon.BagFrame)
 local Tab = Addon:NewClass('GuildTab', 'CheckButton', Addon.Bag)
 TabFrame.Button = Tab
@@ -34,7 +34,7 @@ function Tab:OnClick()
 	if viewable then
 		SetCurrentGuildBankTab(tab)
 		QueryGuildBankTab(tab)
-		self:SendMessage('GUILDBANK_TAB_CHANGED')
+		self:SendMessage('GUILD_TAB_CHANGED')
 	end
 
 	self:SetChecked(viewable)
@@ -47,7 +47,7 @@ function Tab:RegisterEvents()
 	self:Update()
 
 	if self:IsCached() then
-		self:RegisterMessage('GUILDBANK_TAB_CHANGED', 'UpdateStatus')
+		self:RegisterMessage('GUILD_TAB_CHANGED', 'UpdateStatus')
 	else
 		self:RegisterEvent('GUILDBANK_UPDATE_TABS', 'Update')
 		self:RegisterEvent('GUILDBANKBAGSLOTS_CHANGED', 'UpdateStatus')
@@ -74,7 +74,7 @@ function Tab:UpdateStatus()
 
 	local _,_,_,_,_, numWithdrawals, cached = self:GetInfo()
 	if self:GetChecked() and not cached then
-		self.Count:SetText(numWithdrawals)
+		self.Count:SetText(numWithdrawals >= 0 and numWithdrawals or '∞')
 	end
 end
 

@@ -3,8 +3,8 @@
 		A guild bank item slot container
 --]]
 
-local MODULE, Module =  ...
-local Addon = Module.Addon
+local MODULE =  ...
+local ADDON, Addon = MODULE:match('[^_]+'), _G[MODULE:match('[^_]+')]
 local ItemFrame = Addon:NewClass('GuildItemFrame', 'Frame', Addon.ItemFrame)
 ItemFrame.Button = Addon.GuildItemSlot
 ItemFrame.Transposed = true
