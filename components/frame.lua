@@ -11,8 +11,8 @@ Frame.Title = LibStub('AceLocale-3.0'):GetLocale(ADDON).TitleGuild
 Frame.MoneyFrame = Addon.GuildMoneyFrame
 Frame.ItemFrame = Addon.GuildItemFrame
 Frame.BagFrame = Addon.GuildTabFrame
-Frame.CloseSound = 'GuildVaultClose'
-Frame.OpenSound = 'GuildVaultOpen'
+Frame.CloseSound = SOUNDKIT.GUILD_VAULT_CLOSE
+Frame.OpenSound = SOUNDKIT.GUILD_VAULT_OPEN
 Frame.Bags = {}
 
 for i = 1, MAX_GUILDBANK_TABS do
