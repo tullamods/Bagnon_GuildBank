@@ -35,7 +35,7 @@ function MoneyFrame:OnClick(button)
 		DropCursorMoney()
 
 	elseif button == 'LeftButton' and not IsShiftKeyDown() then
-		PlaySound('igMainMenuOption')
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 		StaticPopup_Hide('GUILDBANK_WITHDRAW')
 
 		if StaticPopup_Visible('GUILDBANK_DEPOSIT') then
@@ -45,7 +45,7 @@ function MoneyFrame:OnClick(button)
 		end
 	else
 		if CanWithdrawGuildBankMoney() then
-			PlaySound('igMainMenuOption')
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 			StaticPopup_Hide('GUILDBANK_DEPOSIT')
 
 			if StaticPopup_Visible('GUILDBANK_WITHDRAW') then
