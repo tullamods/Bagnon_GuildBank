@@ -35,7 +35,7 @@ function MoneyFrame:OnClick(button)
 		DropCursorMoney()
 
 	elseif button == 'LeftButton' and not IsShiftKeyDown() then
-		PlaySound('igMainMenuOption')
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
 		StaticPopup_Hide('GUILDBANK_WITHDRAW')
 
 		if StaticPopup_Visible('GUILDBANK_DEPOSIT') then
@@ -43,16 +43,14 @@ function MoneyFrame:OnClick(button)
 		else
 			StaticPopup_Show('GUILDBANK_DEPOSIT')
 		end
-	else
-		if CanWithdrawGuildBankMoney() then
-			PlaySound('igMainMenuOption')
-			StaticPopup_Hide('GUILDBANK_DEPOSIT')
+	elseif CanWithdrawGuildBankMoney() then
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+		StaticPopup_Hide('GUILDBANK_DEPOSIT')
 
-			if StaticPopup_Visible('GUILDBANK_WITHDRAW') then
-				StaticPopup_Hide('GUILDBANK_WITHDRAW')
-			else
-				StaticPopup_Show('GUILDBANK_WITHDRAW')
-			end
+		if StaticPopup_Visible('GUILDBANK_WITHDRAW') then
+			StaticPopup_Hide('GUILDBANK_WITHDRAW')
+		else
+			StaticPopup_Show('GUILDBANK_WITHDRAW')
 		end
 	end
 end
@@ -65,7 +63,7 @@ function MoneyFrame:OnEnter()
 	if CanWithdrawGuildBankMoney() then
 		local withdrawMoney = min(GetGuildBankWithdrawMoney(), GetGuildBankMoney())
 		if withdrawMoney > 0 then
-			GameTooltip:AddLine(format(L.TipWithdrawRemaining, GetCoinTextureString(withdrawMoney, 11)), 1,1,1)
+			GameTooltip:AddLine(format(L.TipWithdrawRemaining, GetMoneyString(withdrawMoney, true)), 1,1,1)
 		else
 			GameTooltip:AddLine(L.TipWithdraw, 1,1,1)
 		end
