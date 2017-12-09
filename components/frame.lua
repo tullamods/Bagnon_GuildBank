@@ -73,7 +73,7 @@ function Frame:ListMenuButtons()
 	Addon.Frame.ListMenuButtons(self)
 end
 
-function Frame:HasPlayerSelector() end
+function Frame:HasOwnerSelector() end
 function Frame:HasSortButton() end
 function Frame:HasBagToggle() end
 function Frame:IsBagFrameShown()
