@@ -1,10 +1,10 @@
-## Interface: 80100
+## Interface: 80200
 ## Title: |cff20ff20Bagnon Guild Bank|r
 ## Author: Tuller & Jaliborc (João Cardoso)
 ## Notes: Single window display for your guild bank
 ## RequiredDeps: Bagnon
 ## LoadOnDemand: 1
-## Version: 8.1.4
+## Version: 8.2.0
 
 main.lua
 components\components.xml
